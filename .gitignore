@@ -3,6 +3,8 @@
 # Folders
 /data/*
 
+gpgsign = false
+
 # Compiled output
 /dist
 /tmp
