@@ -27,12 +27,17 @@ export class PlayerService {
 					})
 				);
 			}
-		)
+		);
 	}
 
-	getTopRatedPlayers$(n: number): Observable<Player[]> {
+	getTopRatedPlayers$(n: number, reverse = false): Observable<Player[]> {
 		return this.players$.pipe(
-			map(players => players.sort((a, b) => b.overall - a.overall).slice(0, n))
+			map(players => players.sort((a, b) => {
+				if (reverse) {
+					return a.overall - b.overall;
+				}
+				return b.overall - a.overall;
+			}).slice(0, n))
 		);
 	}
 }

@@ -14,8 +14,10 @@ export class AppComponent {
 	title = 'angular-app';
 
 	topRatedPlayers$: Observable<Player[]>;
+	lowestRatedPlayers$: Observable<Player[]>;
 
 	constructor(private playerService: PlayerService) {
 		this.topRatedPlayers$ = playerService.getTopRatedPlayers$(10);
+		this.lowestRatedPlayers$ = playerService.getTopRatedPlayers$(10, true);
 	}
 }
