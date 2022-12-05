@@ -4,5 +4,15 @@
 		{{ player.short_name }}
 	</div>
 </div>
-<app-radar-plot></app-radar-plot>
-<app-pcp-plot></app-pcp-plot>
+
+<form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+	<label>
+		<p>First Name:*</p>
+		<input type="text" formControlName="firstName">
+	</label>
+	<label>
+		<p>Last Name:*</p>
+		<input type="text" formControlName="lastName">
+	</label>
+	<button type="submit">Submit</button>
+</form>

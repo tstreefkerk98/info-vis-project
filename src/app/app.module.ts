@@ -6,6 +6,7 @@ import {AppComponent} from './app.component';
 import {HttpClientModule} from "@angular/common/http";
 import {RadarPlotComponent} from './radar-plot/radar-plot.component';
 import {PcpPlotComponent} from './pcp-plot/pcp-plot.component';
+import {ReactiveFormsModule} from '@angular/forms';
 
 @NgModule({
 	declarations: [
@@ -13,11 +14,12 @@ import {PcpPlotComponent} from './pcp-plot/pcp-plot.component';
 		RadarPlotComponent,
 		PcpPlotComponent,
 	],
-	imports: [
-		BrowserModule,
-		AppRoutingModule,
-		HttpClientModule,
-	],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        HttpClientModule,
+        ReactiveFormsModule,
+    ],
 	providers: [],
 	bootstrap: [AppComponent]
 })
