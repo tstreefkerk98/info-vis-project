@@ -6,6 +6,7 @@ import {AppComponent} from './app.component';
 import {HttpClientModule} from "@angular/common/http";
 import {RadarPlotComponent} from './radar-plot/radar-plot.component';
 import {PcpPlotComponent} from './pcp-plot/pcp-plot.component';
+import {TitleCasePipe} from '@angular/common';
 
 @NgModule({
 	declarations: [
@@ -18,7 +19,7 @@ import {PcpPlotComponent} from './pcp-plot/pcp-plot.component';
 		AppRoutingModule,
 		HttpClientModule,
 	],
-	providers: [],
+	providers: [TitleCasePipe],
 	bootstrap: [AppComponent]
 })
 export class AppModule {

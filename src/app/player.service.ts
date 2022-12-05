@@ -4,7 +4,7 @@ import {Player} from "../assets/interfaces/player";
 import {BehaviorSubject, combineLatest, first, map, Observable, ReplaySubject} from "rxjs";
 
 
-interface Filter {
+export interface Filter {
 	key: string,
 	value: number | string | null
 }
@@ -33,7 +33,6 @@ export class PlayerService {
 					return player as Player;
 				});
 				this.players$.next(players);
-				this.filteredPlayers$.next(players);
 			}
 		);
 

@@ -1,1 +1,16 @@
-<p>radar-plot works!</p>
+<div class="container">
+	<div id="radar-plot-container"></div>
+	<div class="player-selection-container">
+		<div class="player" *ngFor="let player of playerService.filteredPlayers$ | async">
+			<div>
+				{{ player.short_name }}
+				{{ player.pace }}
+				{{ player.shooting }}
+				{{ player.passing }}
+				{{ player.dribbling }}
+				{{ player.defending }}
+				{{ player.physic }}
+			</div>
+		</div>
+	</div>
+</div>
