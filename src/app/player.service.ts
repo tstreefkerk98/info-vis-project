@@ -51,7 +51,7 @@ export class PlayerService {
 					const arr = row.split(';');
 					const player = {};
 					for (let i = 0; i < arr.length - 1; i++) {
-						player[headers[i]] = arr[i];
+						player[headers[i]] = isNaN(+arr[i]) ? arr[i] : +arr[i];
 					}
 					return player as Player;
 				});
