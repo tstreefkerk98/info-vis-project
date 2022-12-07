@@ -14,6 +14,11 @@ export interface SelectedPlayer {
 	color: string | null,
 }
 
+interface SelectedPlayers {
+	selectedPlayers: SelectedPlayer[],
+	lastSelectedPlayer: SelectedPlayer
+}
+
 @Injectable({
 	providedIn: 'root'
 })
@@ -24,6 +29,10 @@ export class PlayerService {
 	filteredPlayers$: ReplaySubject<Player[]> = new ReplaySubject<Player[]>();
 
 	selectedPlayers$: BehaviorSubject<SelectedPlayer[]> = new BehaviorSubject<SelectedPlayer[]>([]);
+	// selectedPlayers2$: BehaviorSubject<SelectedPlayers> = new BehaviorSubject<SelectedPlayers>({
+	// 	selectedPlayers: [],
+	// 	lastSelectedPlayer: null,
+	// });
 	lastSelectedPlayer$: ReplaySubject<SelectedPlayer> = new ReplaySubject<SelectedPlayer>();
 	allColors: string[] = [
 		'#1f78b4',
@@ -42,8 +51,10 @@ export class PlayerService {
 	usedColors: string[] = [];
 
 	constructor(private http: HttpClient) {
-		this.http.get('assets/data/player_data.csv', {responseType: 'text'}).subscribe(
-			data => {
+		this.http.get('assets/data/player_data.csv', {responseType: 'arraybuffer'}).subscribe(
+			bufferData => {
+				const enc = new TextDecoder('iso-8859-2');
+				const data = (enc).decode(bufferData);
 				const rows = data.split('\n');
 				const headers = rows[0].split(';');
 
@@ -56,7 +67,7 @@ export class PlayerService {
 					return player as Player;
 				});
 				// Filters goalkeepers
-				this.players$.next(players.filter(player => !!player.pace));
+				this.players$.next(players.filter(player => !!player.pace).slice(0, 100));
 			}
 		);
 
@@ -74,7 +85,7 @@ export class PlayerService {
 								return false;
 							}
 						} else {
-							if (player[filter.key] < filter.value.min && player[filter.key] > filter.value.max ) {
+							if (player[filter.key] < filter.value.min && player[filter.key] > filter.value.max) {
 								return false;
 							}
 						}
@@ -83,6 +94,12 @@ export class PlayerService {
 				})
 			);
 		});
+
+		this.selectedPlayers$.subscribe(players => {
+			if (players.length === 0) {
+				this.usedColors = [];
+			}
+		})
 	}
 
 	getTopRatedPlayers$(n: number, reverse = false): Observable<Player[]> {
@@ -124,6 +141,10 @@ export class PlayerService {
 				if (color) {
 					this.selectedPlayers$.next(selectedPlayers.concat({player, color}));
 					this.lastSelectedPlayer$.next({player, color});
+					// this.selectedPlayers2$.next({
+					// 	selectedPlayers: selectedPlayers.concat({player, color}),
+					// 	lastSelectedPlayer: selectedPlayers.find(p => p.player === player)
+					// })
 				}
 			} else {
 				const colorIndex = this.usedColors.findIndex(color => color === selectedPlayers[index].color);

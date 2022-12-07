@@ -28,6 +28,11 @@ export class RadarPlotComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
+		this.playerService.selectedPlayers$.subscribe(players => {
+			if (players.length === 0) {
+				this.pathAssignments.forEach(assignment => assignment.path.remove());
+			}
+		})
 		this.createRadarPlot();
 	}
 

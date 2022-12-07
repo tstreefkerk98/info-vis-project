@@ -4,32 +4,25 @@
 		<app-radar-plot></app-radar-plot>
 	</div>
 	<div class="player-selection-container">
-		<ng-container *ngFor="let player of playerService.filteredPlayers$ | async; let first = first">
-			<div *ngIf="first" class="player player-header">
-				<div class="player__name">Name</div>
-				<div>PAC</div>
-				<div>SHO</div>
-				<div>PAS</div>
-				<div>DRI</div>
-				<div>DEF</div>
-				<div>PHY</div>
-			</div>
-			<ng-container *ngIf="playerService.selectedPlayers$ | async as selectedPlayers">
-				<ng-container *ngIf="playerColor(selectedPlayers, player) as color">
-					<div class="player" [class.player-selected]="color !== unselectedPlayer"
-						 [style.background-color]="(color !== unselectedPlayer) ? color : ''"
-						 (click)="playerService.selectPlayer(player)">
-						<div class="player__name">{{ player.short_name }}</div>
-						<div>{{ player.pace }}</div>
-						<div>{{ player.shooting }}</div>
-						<div>{{ player.passing }}</div>
-						<div>{{ player.dribbling }}</div>
-						<div>{{ player.defending }}</div>
-						<div>{{ player.physic }}</div>
-					</div>
+		<button (click)="playerService.selectedPlayers$.next([])">Clear selected players</button>
+		<table class="player-selection-table">
+			<thead>
+			<td *ngFor="let stat of displayedStats">{{ stat.header }}</td>
+			</thead>
+			<tbody>
+			<ng-container *ngFor="let player of playerService.filteredPlayers$ | async">
+				<ng-container *ngIf="playerService.selectedPlayers$ | async as selectedPlayers">
+					<ng-container *ngIf="playerColor(selectedPlayers, player) as color">
+						<tr [class.player-selected]="color !== unselectedPlayer"
+							[style.background-color]="(color !== unselectedPlayer) ? color : ''"
+							(click)="playerService.selectPlayer(player)">
+							<td *ngFor="let stat of displayedStats">{{ player[stat.key] }}</td>
+						</tr>
+					</ng-container>
 				</ng-container>
 			</ng-container>
-		</ng-container>
+			</tbody>
+		</table>
 	</div>
 	<div class="pcp-plot-container">
 		<app-pcp-plot></app-pcp-plot>
