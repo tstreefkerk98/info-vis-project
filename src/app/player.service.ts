@@ -55,7 +55,6 @@ export class PlayerService {
 					}
 					return player as Player;
 				});
-				// TODO: remove?
 				// Filters goalkeepers
 				this.players$.next(players.filter(player => !!player.pace));
 			}
@@ -112,7 +111,6 @@ export class PlayerService {
 		});
 	}
 
-	// TODO: Improve this function, is still a bit messy
 	// Adds player to selectedPlayers$ if it is not already present, otherwise removes it.
 	selectPlayer(player: Player): void {
 		this.selectedPlayers$.pipe(first()).subscribe(selectedPlayers => {

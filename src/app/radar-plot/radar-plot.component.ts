@@ -57,7 +57,7 @@ export class RadarPlotComponent implements OnInit {
 				.attr('stroke', 'black')
 				.attr('fill', 'none')
 				.attr('stroke-opacity', 1)
-				.attr('opacity', 0.8);
+				.attr('opacity', 0.25);
 		});
 
 		this.features.forEach((feature, i) => {
@@ -70,7 +70,8 @@ export class RadarPlotComponent implements OnInit {
 				.attr('y1', this.radius)
 				.attr('x2', line_coordinate.x)
 				.attr('y2', line_coordinate.y)
-				.attr('stroke', 'black');
+				.attr('stroke', 'black')
+				.attr('opacity', '0.25');
 
 			svg.append('text')
 				.attr('x', label_coordinate.x)
@@ -78,7 +79,6 @@ export class RadarPlotComponent implements OnInit {
 				.style('text-anchor', 'middle')
 				.text(this.titleCasePipe.transform(feature));
 		})
-
 
 		this.playerService.lastSelectedPlayer$.subscribe(player => {
 			if (player.color === null) {
@@ -92,7 +92,7 @@ export class RadarPlotComponent implements OnInit {
 			this.features.forEach(f => d[f] = player.player[f]);
 
 			const coordinates = this.getPathCoordinates(d, this.features, radialScale);
-			console.log(coordinates);
+
 			const group = svg.append('g');
 
 			group.append('path')
@@ -111,12 +111,33 @@ export class RadarPlotComponent implements OnInit {
 				.attr('cy', function (d) { return d.y })
 				.attr('r', 4)
 				.style('fill', player.color)
-				.on('mouseover', function (d, i) {
+				.on('mouseover', function (e, d) {
 					d3.select(this).transition()
 						.duration(50)
-						.attr('r', 8)
+						.attr('r', 8);
+
+					d3.select(this.parentNode).insert('rect', 'text')
+						.attr('x', d.x - 12)
+						.attr('y', d.y - 30)
+						.attr('width', 24)
+						.attr('height', 20)
+						.attr('stroke', 'black')
+						.attr('class', 'stat-label')
+						.style('fill', 'white');
+
+					d3.select(this.parentNode).append('text')
+						.attr('x', d.x)
+						.attr('y', d.y - 15)
+						.attr('fill', player.color)
+						.attr('font-size', '16px')
+						.style('text-anchor', 'middle')
+						.attr('class', 'stat-label')
+						.text(d.value);
+
+					d3.select(this.parentNode).raise();
 				})
-				.on('mouseout', function (d, i) {
+				.on('mouseout', function (e, d) {
+					d3.selectAll('.stat-label').remove();
 					d3.select(this).transition()
 						.duration(50)
 						.attr('r', 4)
@@ -138,7 +159,9 @@ export class RadarPlotComponent implements OnInit {
 	getPathCoordinates(dataPoint, features, radialScale) {
 		const coordinates = features.map((feature, i) => {
 			const angle = (Math.PI / 2) + (2 * Math.PI * i / features.length);
-			return this.angleToCoordinate(angle, dataPoint[feature], radialScale)
+			const coordinates = this.angleToCoordinate(angle, dataPoint[feature], radialScale);
+			coordinates['value'] = dataPoint[feature];
+			return coordinates;
 		});
 		coordinates.push(coordinates[0]);
 		return coordinates;
