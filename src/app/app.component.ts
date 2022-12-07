@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
-import {PlayerService} from "./player.service";
-import {Observable} from "rxjs";
-import {Player} from "../assets/interfaces/player";
+import {PlayerService, SelectedPlayer} from './player.service';
+import {Observable} from 'rxjs';
+import {Player} from '../assets/interfaces/player';
 
 const d3 = require('d3');
 
@@ -16,8 +16,21 @@ export class AppComponent {
 	topRatedPlayers$: Observable<Player[]>;
 	lowestRatedPlayers$: Observable<Player[]>;
 
-	constructor(private playerService: PlayerService) {
+	constructor(public playerService: PlayerService) {
 		this.topRatedPlayers$ = playerService.getTopRatedPlayers$(10);
 		this.lowestRatedPlayers$ = playerService.getTopRatedPlayers$(10, true);
+	}
+
+	// TODO: combine these functions
+	isPlayerSelected(selectedPlayers: SelectedPlayer[], player: Player) {
+		return !!selectedPlayers.find(selectedPlayer => selectedPlayer.player === player);
+	}
+
+	temp(selectedPlayers: SelectedPlayer[], player: Player): string {
+		const selectedPlayer = selectedPlayers.find(selectedPlayer => selectedPlayer.player === player);
+		if (!!selectedPlayer) {
+			return selectedPlayer.color;
+		}
+		return '';
 	}
 }
