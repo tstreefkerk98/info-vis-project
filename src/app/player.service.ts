@@ -6,7 +6,7 @@ import {BehaviorSubject, combineLatest, first, map, Observable, ReplaySubject} f
 
 export interface Filter {
 	key: string,
-	value: number | string | null
+	value: number | string | null | { min: number, max: number }
 }
 
 export interface SelectedPlayer {
@@ -69,8 +69,12 @@ export class PlayerService {
 							if (player[filter.key] <= filter.value) {
 								return false;
 							}
-						} else {
+						} else if (typeof filter.value === 'string') {
 							if (player[filter.key] !== filter.value) {
+								return false;
+							}
+						} else {
+							if (player[filter.key] < filter.value.min && player[filter.key] > filter.value.max ) {
 								return false;
 							}
 						}
