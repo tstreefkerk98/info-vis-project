@@ -32,12 +32,10 @@ export class PcpPlotComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
-		this.variable = "Hello World"
-
 		// set the dimensions and margins of the graph
 		const margin = {top: 30, right: 10, bottom: 10, left: 0},
-			width = 500 - margin.left - margin.right,
-			height = 400 - margin.top - margin.bottom;
+			width = 1600 - margin.left - margin.right,
+			height = 600 - margin.top - margin.bottom;
 
 		// append the svg object to the body of the page
 		this.svg = d3.select("#my_dataviz")
@@ -74,10 +72,23 @@ export class PcpPlotComponent implements OnInit {
 	}
 
 	drawAxis(){
+		function dragged(event) {
+			const current = d3.select(this);
+			dimensions.sort(function(a, b) { return x(a) - x(b); });
+
+			current.attr('x', event.x)
+		}
+
+		function drag_end(event, d){
+			console.log(d)
+			d3.select(this).attr("transform", "translate(" + 0 + ")").transition().duration(500);
+		}
+
 		//create new axis
 		const group = this.svg.append('g');
 		const x = this.xScale
 		const y = this.yScale
+		const dimensions = this.features
 		group.selectAll("myAxis")
 			// For each dimension of the dataset I add a 'g' element:
 			.data(this.features).enter()
@@ -86,6 +97,22 @@ export class PcpPlotComponent implements OnInit {
 			.attr("transform", function(d) { return "translate(" + x(d) + ")"; })
 			// And I build the axis with the call function
 			.each(function(d) { d3.select(this).call(d3.axisLeft(y[d])); })
+			.call(d3.drag()
+				.on("start", function(event, d) {
+				})
+				.on("drag", function(event, d) {
+					const pos = a => a == d ? event.x : x(a)
+					dimensions.sort(function(a, b) { return pos(a) - pos(b) });
+					x.domain(dimensions);
+					//todo: select other (changed) dimensions too. And reposition
+					d3.select(this).attr("transform", function(d) { return "translate(" + event.x + ")"; })
+				})
+				.on("end", function(event, d) {
+					d3.select(this).attr("transform", "translate("+x(d)+")")
+				}))
+				.on('mouseover', function (e, d) {
+					d3.select(this).style("cursor", "move");
+				})
 			// Add axis title
 			.append("text")
 			.style("text-anchor", "middle")
@@ -93,10 +120,12 @@ export class PcpPlotComponent implements OnInit {
 			.text(function(d) { return d; })
 			.style("fill", "black")
 
+
 		// overwrite the previous axis
 		if (this.axis != null){
 			this.axis.remove()
 		}
+
 		this.axis = group
 	}
 
