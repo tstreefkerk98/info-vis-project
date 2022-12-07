@@ -54,11 +54,10 @@ export class PlayerService {
 					const arr = row.split(';');
 					const player = {};
 					for (let i = 0; i < arr.length - 1; i++) {
-						player[headers[i]] = arr[i];
+						player[headers[i]] = isNaN(+arr[i]) ? arr[i] : +arr[i];
 					}
 					return player as Player;
 				});
-				// TODO: remove?
 				// Filters goalkeepers
 				this.players$.next(players.filter(player => !!player.pace));
 			}
@@ -115,7 +114,6 @@ export class PlayerService {
 		});
 	}
 
-	// TODO: Improve this function, is still a bit messy
 	// Adds player to selectedPlayers$ if it is not already present, otherwise removes it.
 	selectPlayer(player: Player): void {
 		this.selectedPlayers$.pipe(first()).subscribe(selectedPlayers => {

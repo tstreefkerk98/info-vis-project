@@ -1,8 +1,7 @@
 <h1>Fifa player comparison tool</h1>
 <div class="container">
-	<div class="plot-container">
+	<div class="radar-plot-container">
 		<app-radar-plot></app-radar-plot>
-		<app-pcp-plot></app-pcp-plot>
 	</div>
 	<div class="player-selection-container">
 		<ng-container *ngFor="let player of playerService.filteredPlayers$ | async; let first = first">
@@ -16,18 +15,23 @@
 				<div>PHY</div>
 			</div>
 			<ng-container *ngIf="playerService.selectedPlayers$ | async as selectedPlayers">
-				<div class="player" [class.player-selected]="isPlayerSelected(selectedPlayers, player)"
-					 [style.background-color]="temp(selectedPlayers, player)"
-					 (click)="playerService.selectPlayer(player)">
-					<div class="player__name">{{ player.short_name }}</div>
-					<div>{{ player.pace }}</div>
-					<div>{{ player.shooting }}</div>
-					<div>{{ player.passing }}</div>
-					<div>{{ player.dribbling }}</div>
-					<div>{{ player.defending }}</div>
-					<div>{{ player.physic }}</div>
-				</div>
+				<ng-container *ngIf="playerColor(selectedPlayers, player) as color">
+					<div class="player" [class.player-selected]="color !== unselectedPlayer"
+						 [style.background-color]="(color !== unselectedPlayer) ? color : ''"
+						 (click)="playerService.selectPlayer(player)">
+						<div class="player__name">{{ player.short_name }}</div>
+						<div>{{ player.pace }}</div>
+						<div>{{ player.shooting }}</div>
+						<div>{{ player.passing }}</div>
+						<div>{{ player.dribbling }}</div>
+						<div>{{ player.defending }}</div>
+						<div>{{ player.physic }}</div>
+					</div>
+				</ng-container>
 			</ng-container>
 		</ng-container>
+	</div>
+	<div class="pcp-plot-container">
+		<app-pcp-plot></app-pcp-plot>
 	</div>
 </div>

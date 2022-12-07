@@ -1,15 +1,15 @@
 .container {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	grid-template-rows: 1fr;
+	grid-template-rows: auto;
+	grid-template-areas: 'radar-plot player-selection' 'pcp-plot pcp-plot';
 
-
-	.plot-container {
-		display: flex;
-		flex-direction: column;
+	.radar-plot-container {
+		grid-area: radar-plot;
 	}
 
 	.player-selection-container {
+		grid-area: player-selection;
 		display: flex;
 		flex-direction: column;
 		height: 80vh;
@@ -35,6 +35,10 @@
 				background-color: grey;
 			}
 		}
+	}
+
+	.pcp-plot-container {
+		grid-area: pcp-plot;
 	}
 }
 
