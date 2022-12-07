@@ -1,8 +1,7 @@
 <h1>Fifa player comparison tool</h1>
 <div class="container">
-	<div class="plot-container">
+	<div class="radar-plot-container">
 		<app-radar-plot></app-radar-plot>
-		<app-pcp-plot></app-pcp-plot>
 	</div>
 	<div class="player-selection-container">
 		<ng-container *ngFor="let player of playerService.filteredPlayers$ | async; let first = first">
@@ -31,5 +30,8 @@
 				</ng-container>
 			</ng-container>
 		</ng-container>
+	</div>
+	<div class="pcp-plot-container">
+		<app-pcp-plot></app-pcp-plot>
 	</div>
 </div>
