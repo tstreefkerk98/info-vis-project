@@ -16,21 +16,18 @@ export class AppComponent {
 	topRatedPlayers$: Observable<Player[]>;
 	lowestRatedPlayers$: Observable<Player[]>;
 
+	unselectedPlayer = 'player not selected'
+
 	constructor(public playerService: PlayerService) {
 		this.topRatedPlayers$ = playerService.getTopRatedPlayers$(10);
 		this.lowestRatedPlayers$ = playerService.getTopRatedPlayers$(10, true);
 	}
 
-	// TODO: combine these functions
-	isPlayerSelected(selectedPlayers: SelectedPlayer[], player: Player) {
-		return !!selectedPlayers.find(selectedPlayer => selectedPlayer.player === player);
-	}
-
-	temp(selectedPlayers: SelectedPlayer[], player: Player): string {
+	playerColor(selectedPlayers: SelectedPlayer[], player: Player): string {
 		const selectedPlayer = selectedPlayers.find(selectedPlayer => selectedPlayer.player === player);
 		if (!!selectedPlayer) {
 			return selectedPlayer.color;
 		}
-		return '';
+		return this.unselectedPlayer;
 	}
 }
