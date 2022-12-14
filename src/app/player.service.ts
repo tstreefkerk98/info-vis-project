@@ -15,7 +15,7 @@ export interface SelectedPlayer {
 }
 
 export interface PlayerSelection {
-	players: SelectedPlayer[],
+	selectedPlayers: SelectedPlayer[],
 	lastPlayerId: number
 }
 
@@ -29,22 +29,20 @@ export class PlayerService {
 	filteredPlayers$: ReplaySubject<Player[]> = new ReplaySubject<Player[]>();
 
 	playerSelection$: BehaviorSubject<PlayerSelection> = new BehaviorSubject<PlayerSelection>({
-		players: [],
+		selectedPlayers: [],
 		lastPlayerId: -1,
 	});
 	allColors: string[] = [
-		'#1f78b4',
-		'#33a02c',
-		'#e31a1c',
-		'#ff7f00',
-		'#6a3d9a',
-		'#ffff99',
-		'#a6cee3',
-		'#b2df8a',
-		'#fb9a99',
-		'#fdbf6f',
-		'#cab2d6',
-		'#b15928'
+		'#4e79a7',
+		'#f28e2c',
+		'#e15759',
+		'#76b7b2',
+		'#59a14f',
+		'#edc949',
+		'#af7aa1',
+		'#ff9da7',
+		'#9c755f',
+		'#bab0ab'
 	];
 	usedColors: string[] = [];
 
@@ -120,23 +118,23 @@ export class PlayerService {
 	// Adds player to selectedPlayers$ if it is not already present, otherwise removes it.
 	selectPlayer(player: Player): void {
 		this.playerSelection$.pipe(first()).subscribe(playerSelection => {
-			const index = playerSelection.players.findIndex(selectedPlayer => selectedPlayer.player === player);
+			const index = playerSelection.selectedPlayers.findIndex(selectedPlayer => selectedPlayer.player === player);
 			// Add player to selection
 			if (index === -1) {
 				const color = this.selectColor();
 				if (color) {
 					this.playerSelection$.next({
-						players: playerSelection.players.concat({player, color}),
+						selectedPlayers: playerSelection.selectedPlayers.concat({player, color}),
 						lastPlayerId: player.sofifa_id
 					});
 				}
-			//	Remove player from selection
+				//	Remove player from selection
 			} else {
-				const colorIndex = this.usedColors.findIndex(color => color === playerSelection.players[index].color);
+				const colorIndex = this.usedColors.findIndex(color => color === playerSelection.selectedPlayers[index].color);
 				this.usedColors.splice(colorIndex, 1);
-				playerSelection.players.splice(index, 1);
+				playerSelection.selectedPlayers.splice(index, 1);
 				this.playerSelection$.next({
-					players: playerSelection.players,
+					selectedPlayers: playerSelection.selectedPlayers,
 					lastPlayerId: player.sofifa_id
 				});
 			}
