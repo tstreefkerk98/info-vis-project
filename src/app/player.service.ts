@@ -14,9 +14,9 @@ export interface SelectedPlayer {
 	color: string | null,
 }
 
-interface SelectedPlayers {
-	selectedPlayers: SelectedPlayer[],
-	lastSelectedPlayer: SelectedPlayer
+export interface PlayerSelection {
+	players: SelectedPlayer[],
+	lastPlayerId: number
 }
 
 @Injectable({
@@ -28,12 +28,10 @@ export class PlayerService {
 	filters$: BehaviorSubject<Filter[]> = new BehaviorSubject<Filter[]>([]);
 	filteredPlayers$: ReplaySubject<Player[]> = new ReplaySubject<Player[]>();
 
-	selectedPlayers$: BehaviorSubject<SelectedPlayer[]> = new BehaviorSubject<SelectedPlayer[]>([]);
-	// selectedPlayers2$: BehaviorSubject<SelectedPlayers> = new BehaviorSubject<SelectedPlayers>({
-	// 	selectedPlayers: [],
-	// 	lastSelectedPlayer: null,
-	// });
-	lastSelectedPlayer$: ReplaySubject<SelectedPlayer> = new ReplaySubject<SelectedPlayer>();
+	playerSelection$: BehaviorSubject<PlayerSelection> = new BehaviorSubject<PlayerSelection>({
+		players: [],
+		lastPlayerId: -1,
+	});
 	allColors: string[] = [
 		'#1f78b4',
 		'#33a02c',
@@ -94,23 +92,10 @@ export class PlayerService {
 				})
 			);
 		});
-
-		this.selectedPlayers$.subscribe(players => {
-			if (players.length === 0) {
-				this.usedColors = [];
-			}
-		})
 	}
 
-	getTopRatedPlayers$(n: number, reverse = false): Observable<Player[]> {
-		return this.players$.pipe(
-			map(players => players.sort((a, b) => {
-				if (reverse) {
-					return a.overall - b.overall;
-				}
-				return b.overall - a.overall;
-			}).slice(0, n))
-		);
+	resetUsedColors(): void {
+		this.usedColors = [];
 	}
 
 	// Pass a new filter, update an existing one, or pass value: null to remove filter.
@@ -134,24 +119,26 @@ export class PlayerService {
 
 	// Adds player to selectedPlayers$ if it is not already present, otherwise removes it.
 	selectPlayer(player: Player): void {
-		this.selectedPlayers$.pipe(first()).subscribe(selectedPlayers => {
-			const index = selectedPlayers.findIndex(selectedPlayer => selectedPlayer.player === player);
+		this.playerSelection$.pipe(first()).subscribe(playerSelection => {
+			const index = playerSelection.players.findIndex(selectedPlayer => selectedPlayer.player === player);
+			// Add player to selection
 			if (index === -1) {
 				const color = this.selectColor();
 				if (color) {
-					this.selectedPlayers$.next(selectedPlayers.concat({player, color}));
-					this.lastSelectedPlayer$.next({player, color});
-					// this.selectedPlayers2$.next({
-					// 	selectedPlayers: selectedPlayers.concat({player, color}),
-					// 	lastSelectedPlayer: selectedPlayers.find(p => p.player === player)
-					// })
+					this.playerSelection$.next({
+						players: playerSelection.players.concat({player, color}),
+						lastPlayerId: player.sofifa_id
+					});
 				}
+			//	Remove player from selection
 			} else {
-				const colorIndex = this.usedColors.findIndex(color => color === selectedPlayers[index].color);
+				const colorIndex = this.usedColors.findIndex(color => color === playerSelection.players[index].color);
 				this.usedColors.splice(colorIndex, 1);
-				selectedPlayers.splice(index, 1);
-				this.selectedPlayers$.next(selectedPlayers);
-				this.lastSelectedPlayer$.next({player, color: null});
+				playerSelection.players.splice(index, 1);
+				this.playerSelection$.next({
+					players: playerSelection.players,
+					lastPlayerId: player.sofifa_id
+				});
 			}
 		});
 	}

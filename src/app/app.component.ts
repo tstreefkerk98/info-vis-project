@@ -3,8 +3,6 @@ import {PlayerService, SelectedPlayer} from './player.service';
 import {Observable} from 'rxjs';
 import {Player} from '../assets/interfaces/player';
 
-const d3 = require('d3');
-
 interface Stat {
 	key: string,
 	header: string,
@@ -16,7 +14,7 @@ interface Stat {
 	styleUrls: ['./app.component.less']
 })
 export class AppComponent {
-	title = 'angular-app';
+	title = 'Fifa manager';
 
 	topRatedPlayers$: Observable<Player[]>;
 	lowestRatedPlayers$: Observable<Player[]>;
@@ -36,10 +34,7 @@ export class AppComponent {
 		{key: 'weight_kg', header: 'Weight'},
 	]
 
-	constructor(public playerService: PlayerService) {
-		this.topRatedPlayers$ = playerService.getTopRatedPlayers$(10);
-		this.lowestRatedPlayers$ = playerService.getTopRatedPlayers$(10, true);
-	}
+	constructor(public playerService: PlayerService) {}
 
 	playerColor(selectedPlayers: SelectedPlayer[], player: Player): string {
 		const selectedPlayer = selectedPlayers.find(selectedPlayer => selectedPlayer.player === player);

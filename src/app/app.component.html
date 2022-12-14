@@ -4,15 +4,15 @@
 		<app-radar-plot></app-radar-plot>
 	</div>
 	<div class="player-selection-container">
-		<button (click)="playerService.selectedPlayers$.next([])">Clear selected players</button>
+		<button (click)="playerService.playerSelection$.next({players: [], lastPlayerId: -1})">Clear selected players</button>
 		<table class="player-selection-table">
 			<thead>
 			<td *ngFor="let stat of displayedStats">{{ stat.header }}</td>
 			</thead>
 			<tbody>
 			<ng-container *ngFor="let player of playerService.filteredPlayers$ | async">
-				<ng-container *ngIf="playerService.selectedPlayers$ | async as selectedPlayers">
-					<ng-container *ngIf="playerColor(selectedPlayers, player) as color">
+				<ng-container *ngIf="playerService.playerSelection$ | async as playerSelection">
+					<ng-container *ngIf="playerColor(playerSelection.players, player) as color">
 						<tr [class.player-selected]="color !== unselectedPlayer"
 							[style.background-color]="(color !== unselectedPlayer) ? color : ''"
 							(click)="playerService.selectPlayer(player)">

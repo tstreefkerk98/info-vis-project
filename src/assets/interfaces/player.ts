@@ -1,5 +1,5 @@
 export interface Player {
-	sofifa_id: string,
+	sofifa_id: number,
 	player_url: string,
 	short_name: string,
 	long_name: string,
