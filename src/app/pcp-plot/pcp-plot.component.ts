@@ -27,6 +27,9 @@ export class PcpPlotComponent implements OnInit {
 	xScale: any = null;
 	yScale: any = null;
 
+	allPlayers: any
+	selectedPlayers: any
+
 
 	constructor(public playerService: PlayerService) {
 	}
@@ -71,20 +74,19 @@ export class PcpPlotComponent implements OnInit {
 		})
 	}
 
+	updatePlot(draggedFeature = null){
+		const x = this.xScale
+		d3.selectAll(".draggable")
+			.transition()
+			.attr("transform", function(d) { return "translate(" + x(d) + ")"; })
+			.duration(function(d) { return d == draggedFeature ? 0 : 300 });
+		this.drawLines("selected", this.selectedPlayers)
+		this.drawLines("all", this.allPlayers)
+	}
+
 	drawAxis(){
-		function dragged(event) {
-			const current = d3.select(this);
-			dimensions.sort(function(a, b) { return x(a) - x(b); });
-
-			current.attr('x', event.x)
-		}
-
-		function drag_end(event, d){
-			console.log(d)
-			d3.select(this).attr("transform", "translate(" + 0 + ")").transition().duration(500);
-		}
-
 		//create new axis
+		const obj = this
 		const group = this.svg.append('g');
 		const x = this.xScale
 		const y = this.yScale
@@ -93,6 +95,7 @@ export class PcpPlotComponent implements OnInit {
 			// For each dimension of the dataset I add a 'g' element:
 			.data(this.features).enter()
 			.append("g")
+			.classed("draggable", true)
 			// I translate this element to its right position on the x axis
 			.attr("transform", function(d) { return "translate(" + x(d) + ")"; })
 			// And I build the axis with the call function
@@ -102,13 +105,16 @@ export class PcpPlotComponent implements OnInit {
 				})
 				.on("drag", function(event, d) {
 					const pos = a => a == d ? event.x : x(a)
+					const originalDimensions = dimensions.slice();
 					dimensions.sort(function(a, b) { return pos(a) - pos(b) });
-					x.domain(dimensions);
-					//todo: select other (changed) dimensions too. And reposition
+					if (dimensions.toString() != originalDimensions.toString()){
+						x.domain(dimensions);
+						obj.updatePlot(d)
+					}
 					d3.select(this).attr("transform", function(d) { return "translate(" + event.x + ")"; })
 				})
 				.on("end", function(event, d) {
-					d3.select(this).attr("transform", "translate("+x(d)+")")
+					obj.updatePlot(d)
 				}))
 				.on('mouseover', function (e, d) {
 					d3.select(this).style("cursor", "move");
@@ -132,12 +138,14 @@ export class PcpPlotComponent implements OnInit {
 	drawLines(data_type: string, data: any){
 		let path, color, opacity, stroke_width
 		if (data_type == "selected") {
+			this.selectedPlayers = data
 			path = d => d3.line()(this.features.map(p => [this.xScale(p), this.yScale[p](d.player[p])]))
 			color = selectedPlayers => selectedPlayers.color
 			opacity = 1
 			stroke_width = 4
 		}
 		else{
+			this.allPlayers = data
 			data_type = "all"
 			path = d => d3.line()(this.features.map(p => [this.xScale(p), this.yScale[p](d[p])]))
 			color = "black"
