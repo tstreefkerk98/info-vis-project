@@ -81,13 +81,13 @@ export class RadarPlotComponent implements OnInit {
 		})
 
 		this.playerService.playerSelection$.subscribe(selectedPlayers => {
-			if (selectedPlayers.players.length === 0) {
+			if (selectedPlayers.selectedPlayers.length === 0) {
 				this.pathAssignments.forEach(assignment => assignment.path.remove());
 				this.playerService.resetUsedColors();
 				return;
 			}
 
-			const player = selectedPlayers.players.find(selectedPlayer => selectedPlayer.player.sofifa_id === selectedPlayers.lastPlayerId);
+			const player = selectedPlayers.selectedPlayers.find(selectedPlayer => selectedPlayer.player.sofifa_id === selectedPlayers.lastPlayerId);
 			if (!player) {
 				const index = this.pathAssignments.findIndex(assignment => assignment.playerId === selectedPlayers.lastPlayerId);
 				this.pathAssignments[index].path.remove();
