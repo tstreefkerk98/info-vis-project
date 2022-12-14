@@ -49,7 +49,7 @@ export class PcpPlotComponent implements OnInit {
 			.attr("transform", `translate(${margin.left},${margin.top})`);
 
 		this.playerService.filteredPlayers$.subscribe(allPlayers => {
-			// For each dimension, I build a linear scale. I store all in a y object
+			// For each feature, build a linear y scale
 			this.yScale = {}
 			for (let i in this.features) {
 				let name = this.features[i]
@@ -58,7 +58,7 @@ export class PcpPlotComponent implements OnInit {
 					.range([height, 0])
 			}
 
-			// Build the X scale -> it find the best position for each Y axis
+			// Build an x scale
 			this.xScale = d3.scalePoint()
 				.range([0, width])
 				.padding(1)
@@ -80,8 +80,8 @@ export class PcpPlotComponent implements OnInit {
 			.transition()
 			.attr("transform", function(d) { return "translate(" + x(d) + ")"; })
 			.duration(function(d) { return d == draggedFeature ? 0 : 300 });
-		this.drawLines("selected", this.selectedPlayers)
 		this.drawLines("all", this.allPlayers)
+		this.drawLines("selected", this.selectedPlayers)
 	}
 
 	drawAxis(){
@@ -92,13 +92,10 @@ export class PcpPlotComponent implements OnInit {
 		const y = this.yScale
 		const dimensions = this.features
 		group.selectAll("myAxis")
-			// For each dimension of the dataset I add a 'g' element:
 			.data(this.features).enter()
 			.append("g")
 			.classed("draggable", true)
-			// I translate this element to its right position on the x axis
 			.attr("transform", function(d) { return "translate(" + x(d) + ")"; })
-			// And I build the axis with the call function
 			.each(function(d) { d3.select(this).call(d3.axisLeft(y[d])); })
 			.call(d3.drag()
 				.on("start", function(event, d) {
@@ -149,8 +146,8 @@ export class PcpPlotComponent implements OnInit {
 			data_type = "all"
 			path = d => d3.line()(this.features.map(p => [this.xScale(p), this.yScale[p](d[p])]))
 			color = "black"
-			//TODO: dynamically choose the opacity (based on number of players)
-			opacity = 0.2
+			//dynamically choose the opacity based on number of players
+			opacity = Math.min(1/8, 150/this.allPlayers.length)
 			stroke_width = 1
 		}
 

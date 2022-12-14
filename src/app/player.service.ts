@@ -48,7 +48,7 @@ export class PlayerService {
 				const rows = data.split('\n');
 				const headers = rows[0].split(';');
 
-				const content_rows = this.debugMode ? rows.slice(1, 100) : rows.slice(1)
+				const content_rows = this.debugMode ? rows.slice(1, 250) : rows.slice(1)
 
 				const players = content_rows.map(row => {
 					const arr = row.split(';');
