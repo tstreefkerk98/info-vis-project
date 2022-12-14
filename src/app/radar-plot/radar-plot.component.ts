@@ -17,7 +17,7 @@ interface PathAssignment {
 })
 export class RadarPlotComponent implements OnInit {
 
-	radius: number = 250;
+	radius: number = document.documentElement.clientWidth / 6;
 	features: string[] = ['pace', 'shooting', 'passing', 'dribbling', 'defending', 'physic'];
 	pathAssignments: PathAssignment[] = [];
 

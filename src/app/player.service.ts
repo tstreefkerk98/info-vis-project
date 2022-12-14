@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Player} from '../assets/interfaces/player';
-import {BehaviorSubject, combineLatest, first, map, Observable, ReplaySubject} from 'rxjs';
+import {BehaviorSubject, combineLatest, first, ReplaySubject} from 'rxjs';
 
 
 export interface Filter {
@@ -45,7 +45,7 @@ export class PlayerService {
 		'#bab0ab'
 	];
 	usedColors: string[] = [];
-	debugMode: boolean = true;
+	debugMode: boolean = false;
 
 	constructor(private http: HttpClient) {
 		this.http.get('assets/data/player_data.csv', {responseType: 'arraybuffer'}).subscribe(
@@ -65,8 +65,8 @@ export class PlayerService {
 					}
 					return player as Player;
 				});
-				// Filters goalkeepers
-				this.players$.next(players.filter(player => !!player.pace).slice(0, 100));
+				// Filter goalkeepers
+				this.players$.next(players.filter(player => !!player.pace));
 			}
 		);
 
@@ -90,7 +90,7 @@ export class PlayerService {
 						}
 					}
 					return true;
-				})
+				}).slice(0, 250)
 			);
 		});
 	}
@@ -116,6 +116,22 @@ export class PlayerService {
 				this.filters$.next(filters);
 			}
 		});
+	}
+
+	sortFilteredPlayers(key: string, highToLow: boolean) {
+		this.filteredPlayers$.pipe(first()).subscribe(players => {
+			this.filteredPlayers$.next(players.sort((a, b) => {
+				if (typeof(a[key]) === 'string') {
+					return (highToLow)
+						? b[key].localeCompare(a[key].firstname)
+						: a[key].localeCompare(b[key].firstname)
+				}
+				return (highToLow)
+						? b[key] - a[key]
+						: a[key] - b[key]
+				}
+			))
+		})
 	}
 
 	// Adds player to selectedPlayers$ if it is not already present, otherwise removes it.

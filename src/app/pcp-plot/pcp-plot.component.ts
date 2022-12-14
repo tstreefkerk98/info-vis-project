@@ -37,13 +37,13 @@ export class PcpPlotComponent implements OnInit {
 	ngOnInit(): void {
 		// set the dimensions and margins of the graph
 		const margin = {top: 30, right: 10, bottom: 10, left: 0},
-			width = 1600 - margin.left - margin.right,
+			width = document.documentElement.clientWidth,
 			height = 600 - margin.top - margin.bottom;
 
 		// append the svg object to the body of the page
 		this.svg = d3.select("#my_dataviz")
 			.append("svg")
-			.attr("width", width + margin.left + margin.right)
+			.attr("width", width)
 			.attr("height", height + margin.top + margin.bottom)
 			.append("g")
 			.attr("transform", `translate(${margin.left},${margin.top})`);
@@ -111,7 +111,7 @@ export class PcpPlotComponent implements OnInit {
 					d3.select(this).attr("transform", function(d) { return "translate(" + event.x + ")"; })
 				})
 				.on("end", function(event, d) {
-					obj.updatePlot(d)
+					obj.updatePlot()
 				}))
 				.on('mouseover', function (e, d) {
 					d3.select(this).style("cursor", "move");

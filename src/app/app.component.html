@@ -1,5 +1,4 @@
 <body>
-<h1>Fifa player comparison tool</h1>
 <div class="container">
 	<div class="radar-plot-container">
 		<app-radar-plot></app-radar-plot>
@@ -22,7 +21,8 @@
 			<thead>
 			<tr>
 				<th *ngFor="let stat of displayedStats">
-					<div>{{ stat.header }}</div>
+					<div (click)="sortByKey(stat.key)"
+						 [class.widerData]="widerDataKeys.includes(stat.key)">{{ stat.header }}</div>
 				</th>
 			</tr>
 			</thead>
@@ -34,7 +34,9 @@
 							[style.background-color]="(color !== unselectedPlayer) ? color : ''"
 							(click)="playerService.selectPlayer(player)">
 							<td *ngFor="let stat of displayedStats">
-								<div>{{ player[stat.key] }}</div>
+								<div [class.widerData]="widerDataKeys.includes(stat.key)">
+									{{ widerDataKeys.includes(stat.key) ? (player[stat.key] | number) : player[stat.key] }}
+								</div>
 							</td>
 						</tr>
 					</ng-container>

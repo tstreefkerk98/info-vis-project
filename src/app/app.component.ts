@@ -6,6 +6,13 @@ import {Player} from '../assets/interfaces/player';
 interface Stat {
 	key: string,
 	header: string,
+	sortState: SortState,
+}
+
+enum SortState {
+	noSort,
+	highLow,
+	lowHigh,
 }
 
 @Component({
@@ -22,17 +29,23 @@ export class AppComponent {
 	unselectedPlayer = 'player not selected'
 
 	displayedStats: Stat[] = [
-		{key: 'short_name', header: 'Name'},
-		{key: 'pace', header: 'Pace'},
-		{key: 'shooting', header: 'Shooting'},
-		{key: 'passing', header: 'Passing'},
-		{key: 'dribbling', header: 'Dribbling'},
-		{key: 'defending', header: 'Defending'},
-		{key: 'physic', header: 'Physic'},
-		{key: 'age', header: 'Age'},
-		{key: 'height_cm', header: 'Height'},
-		{key: 'weight_kg', header: 'Weight'},
+		{key: 'short_name', header: 'Name', sortState: SortState.noSort},
+		{key: 'overall', header: 'Rating', sortState: SortState.noSort},
+		{key: 'potential', header: 'Potential', sortState: SortState.noSort},
+		{key: 'pace', header: 'Pace', sortState: SortState.noSort},
+		{key: 'shooting', header: 'Shooting', sortState: SortState.noSort},
+		{key: 'passing', header: 'Passing', sortState: SortState.noSort},
+		{key: 'dribbling', header: 'Dribbling', sortState: SortState.noSort},
+		{key: 'defending', header: 'Defending', sortState: SortState.noSort},
+		{key: 'physic', header: 'Physic', sortState: SortState.noSort},
+		{key: 'age', header: 'Age', sortState: SortState.noSort},
+		{key: 'height_cm', header: 'Height', sortState: SortState.noSort},
+		{key: 'weight_kg', header: 'Weight', sortState: SortState.noSort},
+		{key: 'value_eur', header: 'Value', sortState: SortState.noSort},
+		{key: 'wage_eur', header: 'Wage', sortState: SortState.noSort},
 	]
+
+	widerDataKeys: string[] = ['value_eur', 'wage_eur']
 
 	constructor(public playerService: PlayerService) {}
 
@@ -42,5 +55,16 @@ export class AppComponent {
 			return selectedPlayer.color;
 		}
 		return this.unselectedPlayer;
+	}
+
+	sortByKey(key: string) {
+		const statToSort = this.displayedStats.find(stat => stat.key === key);
+		if (statToSort.sortState === SortState.noSort || statToSort.sortState === SortState.lowHigh) {
+			this.playerService.sortFilteredPlayers(key, true)
+			statToSort.sortState = SortState.highLow;
+		} else if (statToSort.sortState === SortState.highLow) {
+			this.playerService.sortFilteredPlayers(key, false)
+			statToSort.sortState = SortState.lowHigh;
+		}
 	}
 }

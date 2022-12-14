@@ -1,10 +1,16 @@
 @import (reference) "../styles.less";
 
+@columnNameWidth: 150px;
+@columnDataWidth: 40px;
+@columnDataLargeWidth: 100px;
+
 body {
 	height: 100vh;
+	width: 100vw;
 	overflow: auto;
 
 	.container {
+		padding: 20px 0;
 		display: grid;
 		grid-template-columns: auto auto auto;
 		grid-template-rows: auto;
@@ -39,25 +45,45 @@ body {
 					tr {
 						display: table;
 						table-layout: fixed;
+						height: inherit;
 					}
 
 					white-space: nowrap;
 					font-weight: bold;
-					height: 80px;
+					height: 50px;
 
 					th {
 						white-space: nowrap;
-						padding: 0 !important;
+						padding: 0;
+
+						&:hover {
+							cursor: pointer;
+							font-weight: 1000;
+						}
 					}
 
-					th:not(:first-of-type) > div {
-						transform: rotate(-45deg) translate(-15px, 15px);
-						width: 40px !important;
+					th:not(:first-of-type) {
+						& > div {
+							transform: rotate(-45deg);
+							transform-origin: bottom center;
+							width: @columnDataWidth;
+
+						}
+
+						.widerData {
+							width: @columnDataLargeWidth;
+						}
 					}
 
-					th:first-of-type > div {
-						transform: translate(-52px, 25px);
-						width: 150px !important;
+					th:first-of-type {
+						height: inherit;
+
+						& > div {
+							display: flex;
+							height: inherit;
+							align-items: flex-end;
+							width: @columnNameWidth;
+						}
 					}
 				}
 
@@ -68,17 +94,21 @@ body {
 					width: 100%;
 
 
-					td:not(:first-of-type) > div {
-						width: 40px;
+					td:not(:first-of-type) {
+						& > div {
+							width: @columnDataWidth;
+						}
+						.widerData {
+							width: @columnDataLargeWidth;
+						}
 					}
 
 					td:first-of-type > div {
-						width: 150px;
+						width: @columnNameWidth;
 					}
 
 					td {
-						padding-top: 3px;
-						padding-bottom: 3px;
+						padding: 3px 0;
 					}
 
 					tr:hover {
