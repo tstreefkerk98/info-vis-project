@@ -45,6 +45,7 @@ export class PlayerService {
 		'#bab0ab'
 	];
 	usedColors: string[] = [];
+	debugMode: boolean = true;
 
 	constructor(private http: HttpClient) {
 		this.http.get('assets/data/player_data.csv', {responseType: 'arraybuffer'}).subscribe(
@@ -54,7 +55,9 @@ export class PlayerService {
 				const rows = data.split('\n');
 				const headers = rows[0].split(';');
 
-				const players = rows.slice(1).map(row => {
+				const content_rows = this.debugMode ? rows.slice(1, 250) : rows.slice(1)
+
+				const players = content_rows.map(row => {
 					const arr = row.split(';');
 					const player = {};
 					for (let i = 0; i < arr.length - 1; i++) {
