@@ -1,22 +1,41 @@
+<body>
 <h1>Fifa player comparison tool</h1>
 <div class="container">
 	<div class="radar-plot-container">
 		<app-radar-plot></app-radar-plot>
 	</div>
 	<div class="player-selection-container">
-		<button (click)="playerService.playerSelection$.next({players: [], lastPlayerId: -1})">Clear selected players</button>
-		<table class="player-selection-table">
+		<button (click)="playerService.playerSelection$.next({selectedPlayers: [], lastPlayerId: -1})">Clear selected
+			players
+		</button>
+		<ng-container *ngIf="playerService.playerSelection$ | async as playerSelection">
+			<div *ngFor="let selectedPlayer of playerSelection.selectedPlayers">
+				<div class="selected-player" [style.background-color]="selectedPlayer.color">
+					{{ selectedPlayer.player.short_name }}
+					<a (click)="playerService.selectPlayer(selectedPlayer.player)">X</a>
+				</div>
+			</div>
+		</ng-container>
+	</div>
+	<div class="player-selector-container">
+		<table class="player-selector-table">
 			<thead>
-			<td *ngFor="let stat of displayedStats">{{ stat.header }}</td>
+			<tr>
+				<th *ngFor="let stat of displayedStats">
+					<div>{{ stat.header }}</div>
+				</th>
+			</tr>
 			</thead>
 			<tbody>
 			<ng-container *ngFor="let player of playerService.filteredPlayers$ | async">
 				<ng-container *ngIf="playerService.playerSelection$ | async as playerSelection">
-					<ng-container *ngIf="playerColor(playerSelection.players, player) as color">
+					<ng-container *ngIf="playerColor(playerSelection.selectedPlayers, player) as color">
 						<tr [class.player-selected]="color !== unselectedPlayer"
 							[style.background-color]="(color !== unselectedPlayer) ? color : ''"
 							(click)="playerService.selectPlayer(player)">
-							<td *ngFor="let stat of displayedStats">{{ player[stat.key] }}</td>
+							<td *ngFor="let stat of displayedStats">
+								<div>{{ player[stat.key] }}</div>
+							</td>
 						</tr>
 					</ng-container>
 				</ng-container>
@@ -28,3 +47,5 @@
 		<app-pcp-plot></app-pcp-plot>
 	</div>
 </div>
+
+</body>

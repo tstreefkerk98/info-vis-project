@@ -1,61 +1,103 @@
-.container {
-	display: grid;
-	grid-template-columns: auto auto;
-	grid-template-rows: auto;
-	grid-template-areas: 'radar-plot player-selection' 'pcp-plot pcp-plot';
+@import (reference) "../styles.less";
 
-	.radar-plot-container {
-		grid-area: radar-plot;
-	}
+body {
+	height: 100vh;
+	overflow: auto;
 
-	.player-selection-container {
-		grid-area: player-selection;
-		height: 80vh;
-		overflow: scroll;
+	.container {
+		display: grid;
+		grid-template-columns: auto auto auto;
+		grid-template-rows: auto;
+		grid-template-areas: 'radar-plot player-selection player-selector' 'pcp-plot pcp-plot pcp-plot';
+		grid-column-gap: 8px;
 
-		.player-selection-table {
-			border-collapse: collapse;
+		.radar-plot-container {
+			grid-area: radar-plot;
+		}
 
-			//https://stackoverflow.com/questions/50640725/fixed-header-and-scrollable-body-in-table-in-html-angular
-			//display: block;
-			//height: 70vh;
-			//overflow: auto;
-			//width: 100%;
-
-			//tbody {
-			//	display: block;
-			//	height: 200px;
-			//	overflow: auto;
-			//}
-			//
-			//thead, tbody tr {
-			//	display: table;
-			//	width: 100%;
-			//	table-layout: fixed;
-			//}
-
-			thead {
-				font-weight: bold;
-			}
-
-			tbody {
-				tr:hover {
-					opacity: 0.8;
-					background-color: darkgrey;
-					color: white;
-					cursor: pointer;
-				}
-			}
-
-			td {
-				padding: 6px 12px;
+		.player-selection-container {
+			.selected-player {
+				padding: 4px 8px;
+				display: flex;
+				justify-content: space-between;
+				border-radius: 4px;
+				margin-top: 6px;
+				align-items: center;
+				color: @white;
 			}
 		}
-	}
 
-	.pcp-plot-container {
-		grid-area: pcp-plot;
+		.player-selector-container {
+			grid-area: player-selector;
+			height: 80vh;
+
+			.player-selector-table {
+				border-collapse: collapse;
+				height: 70vh;
+
+				thead {
+					tr {
+						display: table;
+						table-layout: fixed;
+					}
+
+					white-space: nowrap;
+					font-weight: bold;
+					height: 80px;
+
+					th {
+						white-space: nowrap;
+						padding: 0 !important;
+					}
+
+					th:not(:first-of-type) > div {
+						transform: rotate(-45deg) translate(-15px, 15px);
+						width: 40px !important;
+					}
+
+					th:first-of-type > div {
+						transform: translate(-52px, 25px);
+						width: 150px !important;
+					}
+				}
+
+				tbody {
+					display: block;
+					overflow: auto;
+					height: 500px;
+					width: 100%;
+
+
+					td:not(:first-of-type) > div {
+						width: 40px;
+					}
+
+					td:first-of-type > div {
+						width: 150px;
+					}
+
+					td {
+						padding-top: 3px;
+						padding-bottom: 3px;
+					}
+
+					tr:hover {
+						opacity: 0.8;
+						background-color: darkgrey;
+						color: white;
+						cursor: pointer;
+					}
+				}
+
+				tr {
+					display: table;
+					table-layout: fixed;
+				}
+			}
+		}
+
+		.pcp-plot-container {
+			grid-area: pcp-plot;
+		}
 	}
 }
-
-

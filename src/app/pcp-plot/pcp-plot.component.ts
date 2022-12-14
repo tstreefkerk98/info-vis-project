@@ -69,8 +69,8 @@ export class PcpPlotComponent implements OnInit {
 		})
 
 		// draw selected players on top of the graph
-		this.playerService.selectedPlayers$.subscribe(selectedPlayers => {
-			this.drawLines("selected", selectedPlayers)
+		this.playerService.playerSelection$.subscribe(playerSelection => {
+			this.drawLines("selected", playerSelection.selectedPlayers)
 		})
 	}
 
