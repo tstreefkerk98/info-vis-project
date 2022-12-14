@@ -14,6 +14,11 @@ export interface SelectedPlayer {
 	color: string | null,
 }
 
+export interface PlayerSelection {
+	players: SelectedPlayer[],
+	lastPlayerId: number
+}
+
 @Injectable({
 	providedIn: 'root'
 })
@@ -23,8 +28,10 @@ export class PlayerService {
 	filters$: BehaviorSubject<Filter[]> = new BehaviorSubject<Filter[]>([]);
 	filteredPlayers$: ReplaySubject<Player[]> = new ReplaySubject<Player[]>();
 
-	selectedPlayers$: BehaviorSubject<SelectedPlayer[]> = new BehaviorSubject<SelectedPlayer[]>([]);
-	lastSelectedPlayer$: ReplaySubject<SelectedPlayer> = new ReplaySubject<SelectedPlayer>();
+	playerSelection$: BehaviorSubject<PlayerSelection> = new BehaviorSubject<PlayerSelection>({
+		players: [],
+		lastPlayerId: -1,
+	});
 	allColors: string[] = [
 		'#1f78b4',
 		'#33a02c',
@@ -42,8 +49,10 @@ export class PlayerService {
 	usedColors: string[] = [];
 
 	constructor(private http: HttpClient) {
-		this.http.get('assets/data/player_data.csv', {responseType: 'text'}).subscribe(
-			data => {
+		this.http.get('assets/data/player_data.csv', {responseType: 'arraybuffer'}).subscribe(
+			bufferData => {
+				const enc = new TextDecoder('iso-8859-2');
+				const data = (enc).decode(bufferData);
 				const rows = data.split('\n');
 				const headers = rows[0].split(';');
 
@@ -56,7 +65,7 @@ export class PlayerService {
 					return player as Player;
 				});
 				// Filters goalkeepers
-				this.players$.next(players.filter(player => !!player.pace));
+				this.players$.next(players.filter(player => !!player.pace).slice(0, 100));
 			}
 		);
 
@@ -74,7 +83,7 @@ export class PlayerService {
 								return false;
 							}
 						} else {
-							if (player[filter.key] < filter.value.min && player[filter.key] > filter.value.max ) {
+							if (player[filter.key] < filter.value.min && player[filter.key] > filter.value.max) {
 								return false;
 							}
 						}
@@ -85,15 +94,8 @@ export class PlayerService {
 		});
 	}
 
-	getTopRatedPlayers$(n: number, reverse = false): Observable<Player[]> {
-		return this.players$.pipe(
-			map(players => players.sort((a, b) => {
-				if (reverse) {
-					return a.overall - b.overall;
-				}
-				return b.overall - a.overall;
-			}).slice(0, n))
-		);
+	resetUsedColors(): void {
+		this.usedColors = [];
 	}
 
 	// Pass a new filter, update an existing one, or pass value: null to remove filter.
@@ -117,20 +119,26 @@ export class PlayerService {
 
 	// Adds player to selectedPlayers$ if it is not already present, otherwise removes it.
 	selectPlayer(player: Player): void {
-		this.selectedPlayers$.pipe(first()).subscribe(selectedPlayers => {
-			const index = selectedPlayers.findIndex(selectedPlayer => selectedPlayer.player === player);
+		this.playerSelection$.pipe(first()).subscribe(playerSelection => {
+			const index = playerSelection.players.findIndex(selectedPlayer => selectedPlayer.player === player);
+			// Add player to selection
 			if (index === -1) {
 				const color = this.selectColor();
 				if (color) {
-					this.selectedPlayers$.next(selectedPlayers.concat({player, color}));
-					this.lastSelectedPlayer$.next({player, color});
+					this.playerSelection$.next({
+						players: playerSelection.players.concat({player, color}),
+						lastPlayerId: player.sofifa_id
+					});
 				}
+			//	Remove player from selection
 			} else {
-				const colorIndex = this.usedColors.findIndex(color => color === selectedPlayers[index].color);
+				const colorIndex = this.usedColors.findIndex(color => color === playerSelection.players[index].color);
 				this.usedColors.splice(colorIndex, 1);
-				selectedPlayers.splice(index, 1);
-				this.selectedPlayers$.next(selectedPlayers);
-				this.lastSelectedPlayer$.next({player, color: null});
+				playerSelection.players.splice(index, 1);
+				this.playerSelection$.next({
+					players: playerSelection.players,
+					lastPlayerId: player.sofifa_id
+				});
 			}
 		});
 	}

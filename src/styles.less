@@ -1,1 +1,37 @@
 /* You can add global styles to this file, and also import other style files */
+@white: #ffffff;
+@darkGreen: darkseagreen;
+
+body {
+	font-family: Helvetica;
+	background-color: @white;
+	margin: 0;
+	position: relative;
+	overflow: hidden;
+}
+
+h1 {
+	font-size: 40px;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+
+button {
+	font-family: Helvetica;
+	display: flex;
+	align-items: center;
+	text-align: center;
+	padding: 10px 24px;
+
+	font-size: 14px;
+	font-style: normal;
+	font-weight: bold;
+	border-radius: 5px;
+	text-transform: uppercase;
+
+	&:hover {
+		cursor: pointer;
+		color: @white;
+		background-color: @darkGreen;
+	}
+}

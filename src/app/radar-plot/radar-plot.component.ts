@@ -6,7 +6,7 @@ import {TitleCasePipe} from '@angular/common';
 const d3 = require('d3');
 
 interface PathAssignment {
-	playerId: string,
+	playerId: number,
 	path: any,
 }
 
@@ -80,9 +80,16 @@ export class RadarPlotComponent implements OnInit {
 				.text(this.titleCasePipe.transform(feature));
 		})
 
-		this.playerService.lastSelectedPlayer$.subscribe(player => {
-			if (player.color === null) {
-				const index = this.pathAssignments.findIndex(assignment => assignment.playerId === player.player.sofifa_id);
+		this.playerService.playerSelection$.subscribe(selectedPlayers => {
+			if (selectedPlayers.players.length === 0) {
+				this.pathAssignments.forEach(assignment => assignment.path.remove());
+				this.playerService.resetUsedColors();
+				return;
+			}
+
+			const player = selectedPlayers.players.find(selectedPlayer => selectedPlayer.player.sofifa_id === selectedPlayers.lastPlayerId);
+			if (!player) {
+				const index = this.pathAssignments.findIndex(assignment => assignment.playerId === selectedPlayers.lastPlayerId);
 				this.pathAssignments[index].path.remove();
 				this.pathAssignments.splice(index, 1);
 				return;

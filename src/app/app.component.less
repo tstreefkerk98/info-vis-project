@@ -1,6 +1,6 @@
 .container {
 	display: grid;
-	grid-template-columns: 1fr 1fr;
+	grid-template-columns: auto auto;
 	grid-template-rows: auto;
 	grid-template-areas: 'radar-plot player-selection' 'pcp-plot pcp-plot';
 
@@ -10,29 +10,45 @@
 
 	.player-selection-container {
 		grid-area: player-selection;
-		display: flex;
-		flex-direction: column;
 		height: 80vh;
 		overflow: scroll;
 
-		.player {
-			display: flex;
+		.player-selection-table {
+			border-collapse: collapse;
 
-			& > * {
-				padding: 4px 8px;
-				width: 25px
-			}
+			//https://stackoverflow.com/questions/50640725/fixed-header-and-scrollable-body-in-table-in-html-angular
+			//display: block;
+			//height: 70vh;
+			//overflow: auto;
+			//width: 100%;
 
-			.player__name {
-				width: 150px;
-			}
+			//tbody {
+			//	display: block;
+			//	height: 200px;
+			//	overflow: auto;
+			//}
+			//
+			//thead, tbody tr {
+			//	display: table;
+			//	width: 100%;
+			//	table-layout: fixed;
+			//}
 
-			&-header {
+			thead {
 				font-weight: bold;
 			}
 
-			&-selected {
-				background-color: grey;
+			tbody {
+				tr:hover {
+					opacity: 0.8;
+					background-color: darkgrey;
+					color: white;
+					cursor: pointer;
+				}
+			}
+
+			td {
+				padding: 6px 12px;
 			}
 		}
 	}
