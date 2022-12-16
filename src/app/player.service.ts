@@ -6,7 +6,7 @@ import {BehaviorSubject, combineLatest, first, ReplaySubject} from 'rxjs';
 
 export interface Filter {
 	key: string,
-	value: number | string | null | { min: number, max: number }
+	value: number | string | null | { min: number, max: number },
 }
 
 export interface SelectedPlayer {
@@ -47,6 +47,10 @@ export class PlayerService {
 	usedColors: string[] = [];
 	debugMode: boolean = false;
 
+	reverseFilter: string[] = ['value_eur', 'cost_eur'];
+
+	positions = ['ls', 'st', 'rs', 'lw', 'lf', 'cf', 'rf', 'rw', 'lam', 'cam', 'ram', 'lm', 'lcm', 'cm', 'rcm', 'rm', 'lwb', 'ldm', 'cdm', 'rdm', 'rwb', 'lb', 'lcb', 'cb', 'rcb', 'rb']
+
 	constructor(private http: HttpClient) {
 		this.http.get('assets/data/player_data.csv', {responseType: 'arraybuffer'}).subscribe(
 			bufferData => {
@@ -63,6 +67,14 @@ export class PlayerService {
 					for (let i = 0; i < arr.length - 1; i++) {
 						player[headers[i]] = isNaN(+arr[i]) ? arr[i] : +arr[i];
 					}
+					const valuesPerPosition = this.positions.map(position => {
+						if (player[position]) {
+							return eval(player[position] + ((player[position].slice(-1) === '+') ? '0' : ''))
+						}
+						return undefined;
+					});
+					const maxIndex = valuesPerPosition.indexOf(Math.max(...valuesPerPosition));
+					player['position'] = this.positions[maxIndex];
 					return player as Player;
 				});
 				// Filter goalkeepers
@@ -76,8 +88,14 @@ export class PlayerService {
 					for (let i = 0; i < filters.length; i++) {
 						const filter = filters[i];
 						if (typeof filter.value === 'number') {
-							if (player[filter.key] <= filter.value) {
-								return false;
+							if (this.reverseFilter.includes(filter.key)) {
+								if (player[filter.key] >= filter.value) {
+									return false
+								}
+							} else {
+								if (player[filter.key] <= filter.value) {
+									return false;
+								}
 							}
 						} else if (typeof filter.value === 'string') {
 							if (player[filter.key] !== filter.value) {
@@ -103,7 +121,7 @@ export class PlayerService {
 	updateFilters(filter: Filter) {
 		this.filters$.pipe(first()).subscribe(filters => {
 			const index = filters.findIndex(obj => obj.key === filter.key);
-			if (index === -1) {
+			if (index === -1 && filter.value !== null) {
 				// Add new filter
 				this.filters$.next(filters.concat(filter));
 			} else if (filter.value === null) {
@@ -121,12 +139,12 @@ export class PlayerService {
 	sortFilteredPlayers(key: string, highToLow: boolean) {
 		this.filteredPlayers$.pipe(first()).subscribe(players => {
 			this.filteredPlayers$.next(players.sort((a, b) => {
-				if (typeof(a[key]) === 'string') {
+					if (typeof (a[key]) === 'string') {
+						return (highToLow)
+							? b[key].localeCompare(a[key].firstname)
+							: a[key].localeCompare(b[key].firstname)
+					}
 					return (highToLow)
-						? b[key].localeCompare(a[key].firstname)
-						: a[key].localeCompare(b[key].firstname)
-				}
-				return (highToLow)
 						? b[key] - a[key]
 						: a[key] - b[key]
 				}

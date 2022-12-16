@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {PlayerService, SelectedPlayer} from './player.service';
+import {Filter, PlayerService, SelectedPlayer} from './player.service';
 import {Observable} from 'rxjs';
 import {Player} from '../assets/interfaces/player';
 
@@ -13,6 +13,11 @@ enum SortState {
 	noSort,
 	highLow,
 	lowHigh,
+}
+
+enum FilterType {
+	slider,
+	value,
 }
 
 @Component({
@@ -45,6 +50,83 @@ export class AppComponent {
 		{key: 'wage_eur', header: 'Wage', sortState: SortState.noSort},
 	]
 
+	FilterType = FilterType;
+
+	filterDistribution = {
+		short_name: {
+			filterType: FilterType.value,
+			checkBoxChecked: false,
+			value: '',
+		},
+		overall: {
+			filterType: FilterType.slider,
+			checkBoxChecked: false,
+			value: 0,
+		},
+
+		potential: {
+			filterType: FilterType.slider,
+			checkBoxChecked: false,
+			value: 0,
+		},
+		pace: {
+			filterType: FilterType.slider,
+			checkBoxChecked: false,
+			value: 0,
+		},
+		shooting: {
+			filterType: FilterType.slider,
+			checkBoxChecked: false,
+			value: 0,
+		},
+		passing: {
+			filterType: FilterType.slider,
+			checkBoxChecked: false,
+			value: 0,
+		},
+		dribbling: {
+			filterType: FilterType.slider,
+			checkBoxChecked: false,
+			value: 0,
+		},
+		defending: {
+			filterType: FilterType.slider,
+			checkBoxChecked: false,
+			value: 0,
+		},
+		physic: {
+			filterType: FilterType.slider,
+			checkBoxChecked: false,
+			value: 0,
+		},
+		age: {
+			filterType: FilterType.slider,
+			checkBoxChecked: false,
+			value: 0,
+		},
+		height_cm: {
+			filterType: FilterType.slider,
+			checkBoxChecked: false,
+			value: 0,
+		},
+		weight_kg: {
+			filterType: FilterType.slider,
+			checkBoxChecked: false,
+			value: 0,
+		},
+		value_eur: {
+			filterType: FilterType.value,
+			checkBoxChecked: false,
+			value: 0,
+		},
+		wage_eur: {
+			filterType: FilterType.value,
+			checkBoxChecked: false,
+			value: 0,
+		},
+	}
+
+
 	widerDataKeys: string[] = ['value_eur', 'wage_eur']
 
 	constructor(public playerService: PlayerService) {}
@@ -66,5 +148,19 @@ export class AppComponent {
 			this.playerService.sortFilteredPlayers(key, false)
 			statToSort.sortState = SortState.lowHigh;
 		}
+	}
+
+	updateFilterValue(key, target) {
+		this.filterDistribution[key].value = (target) ? isNaN(+target.value) ? target.value : +target.value : target;
+		this.playerService.updateFilters({
+			key, value: this.filterDistribution[key].value
+		});
+	}
+
+	onCheckBoxChange(key, target) {
+		this.filterDistribution[key].checkBoxChecked = target.checked;
+		this.playerService.updateFilters({
+			key, value: (target.checked) ? this.filterDistribution[key].value : null
+		});
 	}
 }

@@ -3,6 +3,23 @@
 	<div class="radar-plot-container">
 		<app-radar-plot></app-radar-plot>
 	</div>
+	<div class="filters-container">
+		<ng-container *ngFor="let stat of displayedStats">
+			<div>{{ stat.header }}</div>
+			<ng-container [ngSwitch]="filterDistribution[stat.key].filterType">
+				<div *ngSwitchCase="FilterType.slider">
+					<input type="range" [disabled]="!filterDistribution[stat.key].checkBoxChecked"
+						   (change)="updateFilterValue(stat.key, $event.target)">
+				</div>
+				<div *ngSwitchCase="FilterType.value">
+					<input type="text" [disabled]="!filterDistribution[stat.key].checkBoxChecked"
+						   (change)="updateFilterValue(stat.key, $event.target)">
+				</div>
+				<div *ngSwitchDefault>Not valid</div>
+			</ng-container>
+			<div><input type="checkbox" (change)="onCheckBoxChange(stat.key, $event.target)"></div>
+		</ng-container>
+	</div>
 	<div class="player-selection-container">
 		<button (click)="playerService.playerSelection$.next({selectedPlayers: [], lastPlayerId: -1})">Clear selected
 			players
