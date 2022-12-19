@@ -45,11 +45,14 @@ export class PlayerService {
 		'#bab0ab'
 	];
 	usedColors: string[] = [];
-	debugMode: boolean = false;
+	debugMode: boolean = true;
 
 	reverseFilter: string[] = ['value_eur', 'cost_eur'];
 
 	positions = ['ls', 'st', 'rs', 'lw', 'lf', 'cf', 'rf', 'rw', 'lam', 'cam', 'ram', 'lm', 'lcm', 'cm', 'rcm', 'rm', 'lwb', 'ldm', 'cdm', 'rdm', 'rwb', 'lb', 'lcb', 'cb', 'rcb', 'rb']
+	positions_atk = ['ls', 'st', 'rs', 'lw', 'lf', 'cf', 'rf', 'rw']
+	positions_mid = ['lam', 'cam', 'ram', 'lm', 'lcm', 'cm', 'rcm', 'rm', 'ldm', 'cdm', 'rdm']
+	positions_def = ['lwb', 'rwb', 'lb', 'lcb', 'cb', 'rcb', 'rb']
 
 	constructor(private http: HttpClient) {
 		this.http.get('assets/data/player_data.csv', {responseType: 'arraybuffer'}).subscribe(
@@ -71,10 +74,23 @@ export class PlayerService {
 						if (player[position]) {
 							return eval(player[position] + ((player[position].slice(-1) === '+') ? '0' : ''))
 						}
-						return undefined;
+						return 0;
 					});
 					const maxIndex = valuesPerPosition.indexOf(Math.max(...valuesPerPosition));
-					player['position'] = this.positions[maxIndex];
+					const position = this.positions[maxIndex]
+					if (this.positions_atk.includes(position)){
+						player['position'] = "atk"
+					}
+					else if (this.positions_mid.includes(position)){
+						player['position'] = "mid"
+					}
+					else if (this.positions_def.includes(position)){
+						player['position'] = "def"
+					}
+					else{
+						console.warn(position+" is not a valid position")
+						player['position'] = null
+					}
 					return player as Player;
 				});
 				// Filter goalkeepers

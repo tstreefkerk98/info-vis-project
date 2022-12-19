@@ -151,7 +151,7 @@ export class AppComponent {
 	}
 
 	updateFilterValue(key, target) {
-		this.filterDistribution[key].value = (target) ? isNaN(+target.value) ? target.value : +target.value : target;
+		this.filterDistribution[key].value = isNaN(+target.value) ? target.value : +target.value;
 		this.playerService.updateFilters({
 			key, value: this.filterDistribution[key].value
 		});

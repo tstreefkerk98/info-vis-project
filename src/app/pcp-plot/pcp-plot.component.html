@@ -1,1 +1,8 @@
-<div id="my_dataviz"></div>
+<div class="container">
+	<div id="positions">
+		<div (mouseenter) = "onPositionHover('atk')" (mouseleave) = "onPositionHover('all')" class="position_hover"> Atk </div>
+		<div (mouseenter) = "onPositionHover('mid')" (mouseleave) = "onPositionHover('all')" class="position_hover"> Mid </div>
+		<div (mouseenter) = "onPositionHover('def')" (mouseleave) = "onPositionHover('all')"  class="position_hover"> Def </div>
+	</div>
+	<div id="my_dataviz"></div>
+</div>

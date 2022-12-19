@@ -16,7 +16,8 @@ export class PcpPlotComponent implements OnInit {
 	variable: string;
 
 	radius: number = 250;
-	features: string[] = ['pace', 'shooting', 'passing', 'dribbling', 'defending', 'physic'];
+	features: string[] = ['pace', 'shooting', 'passing', 'dribbling', 'defending', 'physic', 'potential', 'overall'];
+	features_fixed_domain: string[] = ['pace', 'shooting', 'passing', 'dribbling', 'defending', 'physic', 'potential', 'overall']
 
 	svg = d3.select("#my_dataviz");
 	axis: any;
@@ -49,13 +50,20 @@ export class PcpPlotComponent implements OnInit {
 			.attr("transform", `translate(${margin.left},${margin.top})`);
 
 		this.playerService.filteredPlayers$.subscribe(allPlayers => {
-			// For each feature, build a linear y scale
+			// Dynamic domain
 			this.yScale = {}
-			for (let i in this.features) {
-				let name = this.features[i]
-				this.yScale[name] = d3.scaleLinear()
-					.domain(d3.extent(allPlayers, function(d) { return +d[name]; }))
-					.range([height, 0])
+			for (let name of this.features) {
+				if (this.features_fixed_domain.includes(name)){
+					this.yScale[name] = d3.scaleLinear()
+						.domain([25, 100])
+						.range([height, 0])
+				}
+				else{
+					this.yScale[name] = d3.scaleLinear()
+						.domain(d3.extent(allPlayers, function(d) { return +d[name]; }))
+						.range([height, 0])
+				}
+
 			}
 
 			// Build an x scale
@@ -72,6 +80,18 @@ export class PcpPlotComponent implements OnInit {
 		this.playerService.playerSelection$.subscribe(playerSelection => {
 			this.drawLines("selected", playerSelection.selectedPlayers)
 		})
+	}
+
+	onPositionHover(position: string): void{
+		if (this.allPlayers != null){
+			if (this.lines["atk"] != null)
+				this.lines["atk"].remove()
+			if (this.lines["mid"] != null)
+				this.lines["mid"].remove()
+			if (this.lines["def"] != null)
+				this.lines["def"].remove()
+			this.drawLines(position, this.allPlayers)
+		}
 	}
 
 	updatePlot(draggedFeature = null){
@@ -111,7 +131,7 @@ export class PcpPlotComponent implements OnInit {
 					d3.select(this).attr("transform", function(d) { return "translate(" + event.x + ")"; })
 				})
 				.on("end", function(event, d) {
-					obj.updatePlot(d)
+					obj.updatePlot()
 				}))
 				.on('mouseover', function (e, d) {
 					d3.select(this).style("cursor", "move");
@@ -132,29 +152,46 @@ export class PcpPlotComponent implements OnInit {
 		this.axis = group
 	}
 
-	drawLines(data_type: string, data: any){
-		let path, color, opacity, stroke_width
+	drawLines(data_type: string, data: any, opacity = null){
+		/*
+		data_type: selected, atk, def, mid, all
+		 */
+		let path, color, stroke_width
 		if (data_type == "selected") {
 			this.selectedPlayers = data
 			path = d => d3.line()(this.features.map(p => [this.xScale(p), this.yScale[p](d.player[p])]))
 			color = selectedPlayers => selectedPlayers.color
-			opacity = 1
+			if (opacity==null)
+				opacity = 1
 			stroke_width = 4
 		}
 		else{
 			this.allPlayers = data
-			data_type = "all"
 			path = d => d3.line()(this.features.map(p => [this.xScale(p), this.yScale[p](d[p])]))
 			color = "black"
 			//dynamically choose the opacity based on number of players
-			opacity = Math.min(1/8, 150/this.allPlayers.length)
-			stroke_width = 1
+			if (opacity==null)
+				opacity = Math.min(1/8, 150/this.allPlayers.length)
+			if (data_type != "all"){
+				//highlight the lines of a given position
+				console.log(this.allPlayers)
+				this.drawLines("all", this.allPlayers, opacity/2)
+				data = data.filter(player => player.position == data_type)
+				opacity *= 1.5
+				stroke_width = 2
+			}
+			else{
+				stroke_width = 1
+			}
 		}
 
 		// Draw the lines
 		let group = this.svg.append('g');
 		group.selectAll("myPath")
 			.data(data)
+			.classed("atkPosition", player => player.position == "atk") //unused
+			.classed("midPosition", player => player.position == "mid") //unused
+			.classed("defPosition", player => player.position == "def") //unused
 			.join("path")
 			.attr("d",  path)
 			.style("fill", "none")
