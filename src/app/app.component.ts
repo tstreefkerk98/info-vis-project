@@ -46,7 +46,7 @@ export class AppComponent {
 		{key: 'age', header: 'Age', sortState: SortState.noSort},
 		{key: 'height_cm', header: 'Height', sortState: SortState.noSort},
 		{key: 'weight_kg', header: 'Weight', sortState: SortState.noSort},
-		{key: 'value_eur', header: 'Value', sortState: SortState.noSort},
+		{key: 'value_eur', header: 'Budget', sortState: SortState.noSort},
 		{key: 'wage_eur', header: 'Wage', sortState: SortState.noSort},
 	]
 
@@ -61,58 +61,58 @@ export class AppComponent {
 		overall: {
 			filterType: FilterType.slider,
 			checkBoxChecked: false,
-			value: 0,
+			value: 50,
 		},
 
 		potential: {
 			filterType: FilterType.slider,
 			checkBoxChecked: false,
-			value: 0,
+			value: 50,
 		},
 		pace: {
 			filterType: FilterType.slider,
 			checkBoxChecked: false,
-			value: 0,
+			value: 50,
 		},
 		shooting: {
 			filterType: FilterType.slider,
 			checkBoxChecked: false,
-			value: 0,
+			value: 50,
 		},
 		passing: {
 			filterType: FilterType.slider,
 			checkBoxChecked: false,
-			value: 0,
+			value: 50,
 		},
 		dribbling: {
 			filterType: FilterType.slider,
 			checkBoxChecked: false,
-			value: 0,
+			value: 50,
 		},
 		defending: {
 			filterType: FilterType.slider,
 			checkBoxChecked: false,
-			value: 0,
+			value: 50,
 		},
 		physic: {
 			filterType: FilterType.slider,
 			checkBoxChecked: false,
-			value: 0,
+			value: 50,
 		},
 		age: {
 			filterType: FilterType.slider,
 			checkBoxChecked: false,
-			value: 0,
+			value: 50,
 		},
 		height_cm: {
 			filterType: FilterType.slider,
 			checkBoxChecked: false,
-			value: 0,
+			value: 50,
 		},
 		weight_kg: {
 			filterType: FilterType.slider,
 			checkBoxChecked: false,
-			value: 0,
+			value: 50,
 		},
 		value_eur: {
 			filterType: FilterType.value,

@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {PlayerService} from '../player.service';
-import {ColorService} from '../color.service';
 import {TitleCasePipe} from '@angular/common';
 
 const d3 = require('d3');
@@ -23,7 +22,6 @@ export class RadarPlotComponent implements OnInit {
 
 	constructor(
 		public playerService: PlayerService,
-		public colorService: ColorService,
 		private titleCasePipe: TitleCasePipe) {
 	}
 

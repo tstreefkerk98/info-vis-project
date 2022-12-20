@@ -3,35 +3,39 @@
 	<div class="radar-plot-container">
 		<app-radar-plot></app-radar-plot>
 	</div>
-	<div class="filters-container">
-		<ng-container *ngFor="let stat of displayedStats">
-			<div>{{ stat.header }}</div>
-			<ng-container [ngSwitch]="filterDistribution[stat.key].filterType">
-				<div *ngSwitchCase="FilterType.slider">
-					<input type="range" [disabled]="!filterDistribution[stat.key].checkBoxChecked"
-						   (change)="updateFilterValue(stat.key, $event.target)">
-				</div>
-				<div *ngSwitchCase="FilterType.value">
-					<input type="text" [disabled]="!filterDistribution[stat.key].checkBoxChecked"
-						   (change)="updateFilterValue(stat.key, $event.target)">
-				</div>
-				<div *ngSwitchDefault>Not valid</div>
+		<div class="filters-container">
+			<ng-container *ngFor="let stat of displayedStats">
+				<div>{{ stat.header }}</div>
+				<ng-container [ngSwitch]="filterDistribution[stat.key].filterType">
+					<div *ngSwitchCase="FilterType.slider" class="filter">
+						<input type="range" [disabled]="!filterDistribution[stat.key].checkBoxChecked"
+							   (change)="updateFilterValue(stat.key, $event.target)"
+							   oninput="this.nextElementSibling.value = this.value">
+						<output>{{filterDistribution[stat.key].value}}</output>
+					</div>
+					<div *ngSwitchCase="FilterType.value" class="filter">
+						<input type="text" [disabled]="!filterDistribution[stat.key].checkBoxChecked"
+							   (change)="updateFilterValue(stat.key, $event.target)"
+							   oninput="this.nextElementSibling.value = this.value">
+						<output></output>
+					</div>
+					<div *ngSwitchDefault>Not valid</div>
+				</ng-container>
+				<div><input type="checkbox" (change)="onCheckBoxChange(stat.key, $event.target)"></div>
 			</ng-container>
-			<div><input type="checkbox" (change)="onCheckBoxChange(stat.key, $event.target)"></div>
-		</ng-container>
 	</div>
 	<div class="player-selection-container">
-		<button (click)="playerService.playerSelection$.next({selectedPlayers: [], lastPlayerId: -1})">Clear selected
-			players
+		<button (click)="playerService.playerSelection$.next({selectedPlayers: [], lastPlayerId: -1})">
+			Clear selected players
 		</button>
-		<ng-container *ngIf="playerService.playerSelection$ | async as playerSelection">
+		<div class="selected-players-container" *ngIf="playerService.playerSelection$ | async as playerSelection">
 			<div *ngFor="let selectedPlayer of playerSelection.selectedPlayers">
 				<div class="selected-player" [style.background-color]="selectedPlayer.color">
 					{{ selectedPlayer.player.short_name }}
 					<a (click)="playerService.selectPlayer(selectedPlayer.player)">X</a>
 				</div>
 			</div>
-		</ng-container>
+		</div>
 	</div>
 	<div class="player-selector-container">
 		<table class="player-selector-table">
