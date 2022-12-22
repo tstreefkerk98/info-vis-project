@@ -178,6 +178,8 @@ export class PcpPlotComponent implements OnInit {
 		}
 
 		// Draw the lines
+		let obj = this
+		let mouseover_stroke_width = 4
 		let group = this.svg.append('g');
 		group.selectAll('myPath')
 			.data(data)
@@ -187,6 +189,18 @@ export class PcpPlotComponent implements OnInit {
 			.style('stroke', color)
 			.style('opacity', opacity)
 			.style('stroke-width', stroke_width)
+			.on('mouseover', function (e, d) {
+				d3.select(this).style('stroke-width', mouseover_stroke_width);
+			})
+			.on('mouseleave', function (e, d) {
+				d3.select(this).style('stroke-width', stroke_width);
+			})
+			.on("click", function(e, d) {
+				if ('player' in d){
+					d = d['player']
+				}
+				obj.playerService.selectPlayer(d)
+			})
 
 		// Overwrite the previous lines
 		if (this.lines[data_type] != null) {
