@@ -27,7 +27,6 @@ export class PcpPlotComponent implements OnInit {
 	allPlayers: any
 	selectedPlayers: any
 
-
 	constructor(public playerService: PlayerService) {
 	}
 
@@ -81,12 +80,12 @@ export class PcpPlotComponent implements OnInit {
 
 	onPositionHover(position: string): void {
 		if (this.allPlayers != null) {
-			if (this.lines['atk'] != null)
-				this.lines['atk'].remove()
-			if (this.lines['mid'] != null)
-				this.lines['mid'].remove()
-			if (this.lines['def'] != null)
-				this.lines['def'].remove()
+			//reset all the highlighted categories
+			for (let groupName of this.playerService.positionGroupNames){
+				if (this.lines[groupName.toUpperCase()] != null)
+					this.lines[groupName.toUpperCase()].remove()
+			}
+			//draw the new highlighted categories
 			this.drawLines(position, this.allPlayers)
 		}
 	}
@@ -151,7 +150,7 @@ export class PcpPlotComponent implements OnInit {
 
 	drawLines(data_type: string, data: any, opacity = null) {
 		/*
-		data_type: selected, atk, def, mid, all
+		data_type: selected, all, positionGroup
 		 */
 		let path, color, stroke_width
 		if (data_type == 'selected') {
@@ -171,7 +170,7 @@ export class PcpPlotComponent implements OnInit {
 			if (data_type != 'all') {
 				//highlight the lines of a given position
 				this.drawLines('all', this.allPlayers, opacity / 2)
-				data = data.filter(player => player.position == data_type)
+				data = data.filter(player => player.position_group == data_type)
 				opacity *= 1.5
 				stroke_width = 2
 			} else {
@@ -183,9 +182,6 @@ export class PcpPlotComponent implements OnInit {
 		let group = this.svg.append('g');
 		group.selectAll('myPath')
 			.data(data)
-			.classed('atkPosition', player => player.position == 'atk') //unused
-			.classed('midPosition', player => player.position == 'mid') //unused
-			.classed('defPosition', player => player.position == 'def') //unused
 			.join('path')
 			.attr('d', path)
 			.style('fill', 'none')
