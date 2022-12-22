@@ -36,7 +36,7 @@ export class PcpPlotComponent implements OnInit {
 			// The 128 seems like a weird number, but it is dependent on some the width of the hover buttons and some
 			// padding in the app.component.less
 			width = document.documentElement.clientWidth - margin.left - margin.right - 128,
-			height = document.documentElement.clientHeight * 2 / 3 - margin.top - margin.bottom;
+			height = document.documentElement.clientHeight * 0.85 - margin.top - margin.bottom;
 
 		// append the svg object to the body of the page
 		this.svg = d3.select('#my_dataviz')
@@ -52,7 +52,7 @@ export class PcpPlotComponent implements OnInit {
 			for (let name of this.features) {
 				if (this.features_fixed_domain.includes(name)) {
 					this.yScale[name] = d3.scaleLinear()
-						.domain([25, 100])
+						.domain([0, 100])
 						.range([height, 0])
 				} else {
 					this.yScale[name] = d3.scaleLinear()
