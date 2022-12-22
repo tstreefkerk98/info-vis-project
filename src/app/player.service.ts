@@ -93,6 +93,7 @@ export class PlayerService {
 	];
 
 	constructor(private http: HttpClient) {
+		this.filters$.subscribe(filters => console.log(filters.map(filter => filter.key + ': ' + filter.value)))
 		this.http.get('assets/data/player_data.csv', {responseType: 'arraybuffer'}).subscribe(
 			bufferData => {
 				const enc = new TextDecoder('iso-8859-2');
@@ -144,9 +145,9 @@ export class PlayerService {
 				players.filter(player => {
 					for (let i = 0; i < filters.length; i++) {
 						const filter = filters[i];
-						if (filter.key === 'short_name') {
-							filter.key = 'long_name';
-						}
+						// if (filter.key === 'short_name') {
+						// 	filter.key = 'long_name';
+						// }
 						if (typeof filter.value === 'number') {
 							if (this.reverseFilter.includes(filter.key)) {
 								if (player[filter.key] >= filter.value) {
@@ -179,6 +180,10 @@ export class PlayerService {
 
 	// Pass a new filter, update an existing one, or pass value: null to remove filter.
 	updateFilters(filter: Filter) {
+		// use long_name instead of short_name during filtering
+		if (filter.key === 'short_name') {
+			filter.key = 'long_name';
+		}
 		this.filters$.pipe(first()).subscribe(filters => {
 			const index = filters.findIndex(obj => obj.key === filter.key);
 			if (index === -1 && filter.value !== null) {
