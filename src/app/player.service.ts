@@ -47,7 +47,7 @@ export class PlayerService {
 	usedColors: string[] = [];
 	debugMode: boolean = false;
 
-	reverseFilter: string[] = ['value_eur', 'cost_eur'];
+	reverseFilter: string[] = ['value_eur', 'cost_eur', 'age'];
 
 	specificPositions = ['ls', 'st', 'rs', 'lw', 'lf', 'cf', 'rf', 'rw', 'lam', 'cam', 'ram', 'lm', 'lcm', 'cm', 'rcm', 'rm', 'lwb', 'ldm', 'cdm', 'rdm', 'rwb', 'lb', 'lcb', 'cb', 'rcb', 'rb']
 	positionsAtk = ['ls', 'st', 'rs', 'lw', 'lf', 'cf', 'rf', 'rw']

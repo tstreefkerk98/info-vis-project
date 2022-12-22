@@ -108,6 +108,8 @@ export class AppComponent {
 			filterType: FilterType.slider,
 			checkBoxChecked: false,
 			value: 50,
+			min: 16,
+			max: 60,
 		},
 		height_cm: {
 			filterType: FilterType.slider,
