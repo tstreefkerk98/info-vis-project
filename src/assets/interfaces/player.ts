@@ -105,4 +105,6 @@ export interface Player {
 	rcb: string,
 	rb: string,
 	position: string,
+	specific_position: string,
+	position_group: string,
 }

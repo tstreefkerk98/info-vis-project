@@ -49,10 +49,32 @@ export class PlayerService {
 
 	reverseFilter: string[] = ['value_eur', 'cost_eur'];
 
-	positions = ['ls', 'st', 'rs', 'lw', 'lf', 'cf', 'rf', 'rw', 'lam', 'cam', 'ram', 'lm', 'lcm', 'cm', 'rcm', 'rm', 'lwb', 'ldm', 'cdm', 'rdm', 'rwb', 'lb', 'lcb', 'cb', 'rcb', 'rb']
-	positions_atk = ['ls', 'st', 'rs', 'lw', 'lf', 'cf', 'rf', 'rw']
-	positions_mid = ['lam', 'cam', 'ram', 'lm', 'lcm', 'cm', 'rcm', 'rm', 'ldm', 'cdm', 'rdm']
-	positions_def = ['lwb', 'rwb', 'lb', 'lcb', 'cb', 'rcb', 'rb']
+	specificPositions = ['ls', 'st', 'rs', 'lw', 'lf', 'cf', 'rf', 'rw', 'lam', 'cam', 'ram', 'lm', 'lcm', 'cm', 'rcm', 'rm', 'lwb', 'ldm', 'cdm', 'rdm', 'rwb', 'lb', 'lcb', 'cb', 'rcb', 'rb']
+	positionsAtk = ['ls', 'st', 'rs', 'lw', 'lf', 'cf', 'rf', 'rw']
+	positionsMid = ['lam', 'cam', 'ram', 'lm', 'lcm', 'cm', 'rcm', 'rm', 'ldm', 'cdm', 'rdm']
+	positionsDef = ['lwb', 'rwb', 'lb', 'lcb', 'cb', 'rcb', 'rb']
+
+	positionsLw = ['ls', 'lw', 'lf'];
+	positionsSt = ['st', 'cf'];
+	positionsRw = ['rs', 'rw', 'rf'];
+	positionsLm = ['lam', 'lm', 'lcm', 'ldm'];
+	positionsCm = ['cam', 'cm', 'ccm', 'cdm'];
+	positionsRm = ['ram', 'rm', 'rcm', 'rdm'];
+	positionsLb = ['lb', 'lwb'];
+	positionsCb = ['lcb', 'rcb', 'cb'];
+	positionsRb = ['rb', 'rwb'];
+	positionGroupNames = ['lw', 'st', 'rw', 'lm', 'cm', 'rm', 'lb', 'cb', 'rb'];
+	positionGroups = [
+		this.positionsLw,
+		this.positionsSt,
+		this.positionsRw,
+		this.positionsLm,
+		this.positionsCm,
+		this.positionsRm,
+		this.positionsLb,
+		this.positionsCb,
+		this.positionsRb,
+	];
 
 	constructor(private http: HttpClient) {
 		this.http.get('assets/data/player_data.csv', {responseType: 'arraybuffer'}).subscribe(
@@ -70,27 +92,30 @@ export class PlayerService {
 					for (let i = 0; i < arr.length - 1; i++) {
 						player[headers[i]] = isNaN(+arr[i]) ? arr[i] : +arr[i];
 					}
-					const valuesPerPosition = this.positions.map(position => {
+					const valuesPerPosition = this.specificPositions.map(position => {
 						if (player[position]) {
 							return eval(player[position] + ((player[position].slice(-1) === '+') ? '0' : ''))
 						}
 						return 0;
 					});
 					const maxIndex = valuesPerPosition.indexOf(Math.max(...valuesPerPosition));
-					const position = this.positions[maxIndex]
-					if (this.positions_atk.includes(position)){
-						player['position'] = "atk"
-					}
-					else if (this.positions_mid.includes(position)){
-						player['position'] = "mid"
-					}
-					else if (this.positions_def.includes(position)){
-						player['position'] = "def"
-					}
-					else{
-						console.warn(position+" is not a valid position")
+					const specificPosition = this.specificPositions[maxIndex]
+					player['specific_position'] = specificPosition.toUpperCase();
+					if (this.positionsAtk.includes(specificPosition)) {
+						player['position'] = 'atk'
+					} else if (this.positionsMid.includes(specificPosition)) {
+						player['position'] = 'mid'
+					} else if (this.positionsDef.includes(specificPosition)) {
+						player['position'] = 'def'
+					} else {
+						console.warn(specificPosition + ' is not a valid position')
 						player['position'] = null
 					}
+					const groupIndex = this.positionGroups.findIndex(group => group.includes(specificPosition));
+					if (groupIndex === -1) {
+						console.warn(specificPosition + ' is not a member of a position group');
+					}
+					player['position_group'] = this.positionGroupNames[groupIndex].toUpperCase();
 					return player as Player;
 				});
 				// Filter goalkeepers
@@ -103,6 +128,9 @@ export class PlayerService {
 				players.filter(player => {
 					for (let i = 0; i < filters.length; i++) {
 						const filter = filters[i];
+						if (filter.key === 'short_name') {
+							filter.key = 'long_name';
+						}
 						if (typeof filter.value === 'number') {
 							if (this.reverseFilter.includes(filter.key)) {
 								if (player[filter.key] >= filter.value) {
@@ -114,7 +142,7 @@ export class PlayerService {
 								}
 							}
 						} else if (typeof filter.value === 'string') {
-							if (player[filter.key] !== filter.value) {
+							if (!player[filter.key].toLowerCase().includes(filter.value.toLowerCase())) {
 								return false;
 							}
 						} else {

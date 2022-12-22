@@ -33,11 +33,13 @@ body {
 			'player-selection filters player-selector'
 			'pcp-plot pcp-plot pcp-plot';
 		grid-gap: 8px;
+		//align-items: start;
 
 		.radar-plot-container {
 			grid-area: radar-plot;
 			display: flex;
 			justify-content: center;
+			height: fit-content;
 		}
 
 		.filters-container {
@@ -52,13 +54,13 @@ body {
 
 				input {
 					margin-right: 8px;
+					//width: 100px;
 				}
 			}
 		}
 
 		.player-selection-container {
 			grid-area: player-selection;
-			width: inherit;
 
 			button {
 				margin: auto;
@@ -142,7 +144,7 @@ body {
 				tbody {
 					display: block;
 					overflow: auto;
-					height: 500px;
+					height: 600px;
 					width: 100%;
 
 

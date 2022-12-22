@@ -35,6 +35,7 @@ export class AppComponent {
 
 	displayedStats: Stat[] = [
 		{key: 'short_name', header: 'Name', sortState: SortState.noSort},
+		{key: 'position_group', header: 'Position', sortState: SortState.noSort},
 		{key: 'overall', header: 'Rating', sortState: SortState.noSort},
 		{key: 'potential', header: 'Potential', sortState: SortState.noSort},
 		{key: 'pace', header: 'Pace', sortState: SortState.noSort},
@@ -58,13 +59,17 @@ export class AppComponent {
 			checkBoxChecked: false,
 			value: '',
 		},
-		overall: {
+		position_group: {
+			filterType: FilterType.value,
+			checkBoxChecked: false,
+			value: '',
+		},
+		potential: {
 			filterType: FilterType.slider,
 			checkBoxChecked: false,
 			value: 50,
 		},
-
-		potential: {
+		overall: {
 			filterType: FilterType.slider,
 			checkBoxChecked: false,
 			value: 50,
@@ -107,12 +112,16 @@ export class AppComponent {
 		height_cm: {
 			filterType: FilterType.slider,
 			checkBoxChecked: false,
-			value: 50,
+			value: 180,
+			min: 150,
+			max: 210,
 		},
 		weight_kg: {
 			filterType: FilterType.slider,
 			checkBoxChecked: false,
-			value: 50,
+			value: 80,
+			min: 50,
+			max: 110
 		},
 		value_eur: {
 			filterType: FilterType.value,
