@@ -19,6 +19,16 @@
 					<input type="text" [disabled]="!filterDistribution[stat.key].checkBoxChecked"
 						   (change)="updateFilterValue(stat.key, $event.target)">
 				</div>
+				<div *ngSwitchCase="FilterType.dropdown" class="filter">
+					<select name="position_group" id="position_group"
+							[disabled]="!filterDistribution[stat.key].checkBoxChecked"
+							(change)="updateFilterValue(stat.key, $event.target)">
+						<option value=""></option>
+						<ng-container *ngFor=" let positionGroup of playerService.positionGroupNames">
+							<option value="{{positionGroup}}">{{ positionGroup | uppercase }}</option>
+						</ng-container>
+					</select>
+				</div>
 				<div *ngSwitchDefault>Not valid</div>
 			</ng-container>
 			<div><input type="checkbox" (change)="onCheckBoxChange(stat.key, $event.target)"></div>

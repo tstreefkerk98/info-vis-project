@@ -7,9 +7,6 @@ MIT
 @angular/platform-browser
 MIT
 
-@angular/router
-MIT
-
 d3
 ISC
 Copyright 2010-2022 Mike Bostock
