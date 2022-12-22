@@ -18,6 +18,7 @@ enum SortState {
 enum FilterType {
 	slider,
 	value,
+	dropdown,
 }
 
 @Component({
@@ -60,7 +61,7 @@ export class AppComponent {
 			value: '',
 		},
 		position_group: {
-			filterType: FilterType.value,
+			filterType: FilterType.dropdown,
 			checkBoxChecked: false,
 			value: '',
 		},
