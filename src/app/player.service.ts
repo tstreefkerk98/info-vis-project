@@ -24,9 +24,9 @@ export interface PlayerSelection {
 })
 export class PlayerService {
 
-	players$: ReplaySubject<Player[]> = new ReplaySubject<Player[]>();
+	players$: ReplaySubject<Player[]> = new ReplaySubject<Player[]>(1);
 	filters$: BehaviorSubject<Filter[]> = new BehaviorSubject<Filter[]>([]);
-	filteredPlayers$: ReplaySubject<Player[]> = new ReplaySubject<Player[]>();
+	filteredPlayers$: ReplaySubject<Player[]> = new ReplaySubject<Player[]>(1);
 
 	playerSelection$: BehaviorSubject<PlayerSelection> = new BehaviorSubject<PlayerSelection>({
 		selectedPlayers: [],
@@ -45,7 +45,7 @@ export class PlayerService {
 		'#bab0ab'
 	];
 	usedColors: string[] = [];
-	debugMode: boolean = true;
+	debugMode: boolean = false;
 
 	reverseFilter: string[] = ['value_eur', 'cost_eur'];
 
@@ -54,26 +54,42 @@ export class PlayerService {
 	positionsMid = ['lam', 'cam', 'ram', 'lm', 'lcm', 'cm', 'rcm', 'rm', 'ldm', 'cdm', 'rdm']
 	positionsDef = ['lwb', 'rwb', 'lb', 'lcb', 'cb', 'rcb', 'rb']
 
-	positionsLw = ['ls', 'lw', 'lf'];
-	positionsSt = ['st', 'cf'];
-	positionsRw = ['rs', 'rw', 'rf'];
-	positionsLm = ['lam', 'lm', 'lcm', 'ldm'];
-	positionsCm = ['cam', 'cm', 'ccm', 'cdm'];
-	positionsRm = ['ram', 'rm', 'rcm', 'rdm'];
-	positionsLb = ['lb', 'lwb'];
+	positionsLw = ['lw'];
+	positionsSt = ['ls', 'rs', 'st'];
+	positionsCf = ['lf', 'cf', 'rf'];
+	positionsRw = ['rw'];
+	positionsLm = ['lm'];
+	positionsCam = ['lam', 'cam', 'ram'];
+	positionsCm = ['lcm', 'cm', 'rcm'];
+	positionsCdm = ['ldm', 'cdm', 'rdm'];
+	positionsRm = ['rm'];
+	positionsWb = ['lb', 'lwb', 'rb', 'rwb'];
 	positionsCb = ['lcb', 'rcb', 'cb'];
-	positionsRb = ['rb', 'rwb'];
-	positionGroupNames = ['lw', 'st', 'rw', 'lm', 'cm', 'rm', 'lb', 'cb', 'rb'];
+	positionGroupNames = [
+		'st',
+		'cf',
+		'rw',
+		'lw',
+		'rm',
+		'lm',
+		'cam',
+		'cm',
+		'cdm',
+		'wb',
+		'cb',
+	];
 	positionGroups = [
-		this.positionsLw,
 		this.positionsSt,
+		this.positionsCf,
 		this.positionsRw,
-		this.positionsLm,
-		this.positionsCm,
+		this.positionsLw,
 		this.positionsRm,
-		this.positionsLb,
+		this.positionsLm,
+		this.positionsCam,
+		this.positionsCm,
+		this.positionsCdm,
+		this.positionsWb,
 		this.positionsCb,
-		this.positionsRb,
 	];
 
 	constructor(private http: HttpClient) {
@@ -99,7 +115,7 @@ export class PlayerService {
 						return 0;
 					});
 					const maxIndex = valuesPerPosition.indexOf(Math.max(...valuesPerPosition));
-					const specificPosition = this.specificPositions[maxIndex]
+					const specificPosition = this.specificPositions[maxIndex];
 					player['specific_position'] = specificPosition.toUpperCase();
 					if (this.positionsAtk.includes(specificPosition)) {
 						player['position'] = 'atk'
@@ -152,7 +168,7 @@ export class PlayerService {
 						}
 					}
 					return true;
-				}).slice(0, 250)
+				}).slice(0, 500)
 			);
 		});
 	}
