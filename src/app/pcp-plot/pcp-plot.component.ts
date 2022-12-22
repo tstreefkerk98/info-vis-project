@@ -97,7 +97,6 @@ export class PcpPlotComponent implements OnInit {
 			.attr('transform', function (d) { return 'translate(' + x(d) + ')'; })
 			.duration(function (d) { return d == draggedFeature ? 0 : 300 });
 		this.drawLines('all', this.allPlayers)
-		this.drawLines('selected', this.selectedPlayers)
 	}
 
 	drawAxis() {
@@ -194,5 +193,10 @@ export class PcpPlotComponent implements OnInit {
 			this.lines[data_type].remove()
 		}
 		this.lines[data_type] = group
+
+		//make sure the selected players are drawn on top of the other players
+		if (data_type != 'selected'){
+			this.drawLines('selected', this.selectedPlayers)
+		}
 	}
 }
