@@ -1,5 +1,5 @@
 export interface Player {
-	sofifa_id: string,
+	sofifa_id: number,
 	player_url: string,
 	short_name: string,
 	long_name: string,
@@ -104,4 +104,7 @@ export interface Player {
 	cb: string,
 	rcb: string,
 	rb: string,
+	position: string,
+	specific_position: string,
+	position_group: string,
 }
