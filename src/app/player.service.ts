@@ -93,7 +93,6 @@ export class PlayerService {
 	];
 
 	constructor(private http: HttpClient) {
-		this.filters$.subscribe(filters => console.log(filters.map(filter => filter.key + ': ' + filter.value)))
 		this.http.get('assets/data/player_data.csv', {responseType: 'arraybuffer'}).subscribe(
 			bufferData => {
 				const enc = new TextDecoder('iso-8859-2');
@@ -145,9 +144,6 @@ export class PlayerService {
 				players.filter(player => {
 					for (let i = 0; i < filters.length; i++) {
 						const filter = filters[i];
-						// if (filter.key === 'short_name') {
-						// 	filter.key = 'long_name';
-						// }
 						if (typeof filter.value === 'number') {
 							if (this.reverseFilter.includes(filter.key)) {
 								if (player[filter.key] >= filter.value) {
@@ -230,7 +226,7 @@ export class PlayerService {
 						lastPlayerId: player.sofifa_id
 					});
 				}
-				//	Remove player from selection
+			//	Remove player from selection
 			} else {
 				const colorIndex = this.usedColors.findIndex(color => color === playerSelection.selectedPlayers[index].color);
 				this.usedColors.splice(colorIndex, 1);

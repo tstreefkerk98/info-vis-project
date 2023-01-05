@@ -138,7 +138,6 @@ export class AppComponent {
 		},
 	}
 
-
 	widerDataKeys: string[] = ['value_eur', 'wage_eur']
 
 	constructor(public playerService: PlayerService) {}
